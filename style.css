@@ -247,3 +247,45 @@ nav a:hover {
   letter-spacing: 2px;
   margin-bottom: 16px;
 }
+
+/* BARRA CERCA CITTÀ */
+.cerca-citta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#input-citta {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  color: #f0f0f0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 180px;
+}
+
+#input-citta:focus {
+  border-color: #e63946;
+}
+
+#input-citta::placeholder {
+  color: #555;
+}
+
+#btn-citta {
+  background: #e63946;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+#btn-citta:hover {
+  background: #c1121f;
+}

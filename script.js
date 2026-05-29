@@ -1,50 +1,22 @@
-// DATI EVENTI
-const eventi = [
-  {
-    nome: "Jazz Night",
-    locale: "Caffè Basaglia",
-    tipo: "jazz",
-    orario: "21:30",
-    indirizzo: "Via Po 12, Torino",
-    prezzo: "€5",
-    lat: 45.0678,
-    lng: 7.6934,
-    data: "2026-05-29"
-  },
-  {
-    nome: "DJ Set Techno",
-    locale: "Bunker",
-    tipo: "dj",
-    orario: "23:00",
-    indirizzo: "Via Nichelino 1, Torino",
-    prezzo: "€10",
-    lat: 45.0521,
-    lng: 7.6678,
-    data: "2026-05-30"
-  },
-  {
-    nome: "Live Rock",
-    locale: "Blah Blah",
-    tipo: "live",
-    orario: "22:00",
-    indirizzo: "Via Po 21, Torino",
-    prezzo: "€8",
-    lat: 45.0682,
-    lng: 7.6941,
-    data: "2026-05-31"
-  },
-  {
-    nome: "Karaoke Night",
-    locale: "Bar Cavour",
-    tipo: "karaoke",
-    orario: "20:00",
-    indirizzo: "Piazza Cavour 3, Torino",
-    prezzo: "Gratis",
-    lat: 45.0748,
-    lng: 7.6823,
-    data: "2026-05-29"
-  }
-];
+// CONFIGURAZIONE SUPABASE
+const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
+
+let eventi = [];
+
+// CARICA EVENTI DA SUPABASE
+async function caricaEventi(citta = "Torino") {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/Eventi?citta=eq.${encodeURIComponent(citta)}&select=*`, {
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  eventi = await res.json();
+  mostraEventi();
+  aggiornaMappa();
+  document.querySelector("#lista-eventi h2").textContent = `Stasera a ${citta}`;
+}
 
 // CARD
 function creaCard(evento) {
@@ -150,10 +122,8 @@ function renderCalendario(mese, anno) {
 
     if (eventiDelGiorno.length > 0) {
       cella.addEventListener("click", () => {
-        const titolo = document.getElementById("eventi-giorno-titolo");
-        const container = document.getElementById("eventi-giorno-container");
-        titolo.textContent = `Eventi del ${g} ${mesiNomi[mese]}`;
-        container.innerHTML = eventiDelGiorno.map(creaCard).join("");
+        document.getElementById("eventi-giorno-titolo").textContent = `Eventi del ${g} ${mesiNomi[mese]}`;
+        document.getElementById("eventi-giorno-container").innerHTML = eventiDelGiorno.map(creaCard).join("");
       });
     }
 
@@ -193,6 +163,36 @@ document.querySelectorAll(".nav-link").forEach(link => {
   });
 });
 
+// CERCA CITTÀ
+document.getElementById("btn-citta").addEventListener("click", cercaCitta);
+document.getElementById("input-citta").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") cercaCitta();
+});
+
+function cercaCitta() {
+  const citta = document.getElementById("input-citta").value.trim();
+  if (!citta) return;
+
+  fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(citta)}&format=json&limit=1`)
+    .then(res => res.json())
+    .then(dati => {
+      if (dati.length === 0) {
+        alert("Città non trovata, riprova.");
+        return;
+      }
+      const lat = parseFloat(dati[0].lat);
+      const lng = parseFloat(dati[0].lon);
+      mappa.setView([lat, lng], 13);
+
+      document.getElementById("vista-mappa").style.display = "block";
+      document.getElementById("vista-calendario").style.display = "none";
+      document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("attiva"));
+      document.querySelector("[data-vista='mappa']").classList.add("attiva");
+      setTimeout(() => mappa.invalidateSize(), 100);
+
+     caricaEventi(citta.charAt(0).toUpperCase() + citta.slice(1).toLowerCase());
+    });
+}
+
 // AVVIO
-mostraEventi();
-aggiornaMappa();
+caricaEventi("Torino");

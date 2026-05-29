@@ -11,13 +11,17 @@
 <body>
 
   <header>
-    <div class="logo">Your Nights</div>
-    <nav>
-      <a href="#" class="nav-link attiva" data-vista="mappa">Mappa</a>
-      <a href="#" class="nav-link" data-vista="calendario">Calendario</a>
-      <a href="#" class="nav-link" data-vista="aggiungi">Aggiungi evento</a>
-    </nav>
-  </header>
+  <div class="logo">Your Nights</div>
+  <div class="cerca-citta">
+    <input type="text" id="input-citta" placeholder="Cerca città..." />
+    <button id="btn-citta">Vai</button>
+  </div>
+  <nav>
+    <a href="#" class="nav-link attiva" data-vista="mappa">Mappa</a>
+    <a href="#" class="nav-link" data-vista="calendario">Calendario</a>
+    <a href="#" class="nav-link" data-vista="aggiungi">Aggiungi evento</a>
+  </nav>
+</header>
 
   <!-- VISTA MAPPA -->
   <div id="vista-mappa">
