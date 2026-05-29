@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Nights</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">Your Nights</div>
+    <nav>
+      <a href="#">Mappa</a>
+      <a href="#">Calendario</a>
+      <a href="#">Aggiungi evento</a>
+    </nav>
+  </header>
+
+  <!-- FILTRI -->
+  <section class="filtri">
+    <button class="filtro attivo" data-tipo="tutti">Tutti</button>
+    <button class="filtro" data-tipo="jazz">Jazz</button>
+    <button class="filtro" data-tipo="live">Live Music</button>
+    <button class="filtro" data-tipo="dj">DJ Set</button>
+    <button class="filtro" data-tipo="karaoke">Karaoke</button>
+    <button class="filtro" data-tipo="sport">Sport</button>
+  </section>
+
+  <!-- MAPPA -->
+  <div id="mappa"></div>
+
+  <!-- LISTA EVENTI -->
+  <section id="lista-eventi">
+    <h2>Stasera a Torino</h2>
+    <div id="cards-container">
+      <!-- Le card degli eventi appariranno qui -->
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
