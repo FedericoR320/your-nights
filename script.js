@@ -21,7 +21,7 @@ async function caricaEventi(citta = "Torino") {
 // CARD
 function creaCard(evento) {
   return `
-    <div class="card" data-tipo="${evento.tipo}">
+    <div class="card" data-tipo="${evento.tipo}" onclick="window.location.href='evento.html?id=${evento.id}'", style="cursor:pointer">
       <div class="tipo">${evento.tipo}</div>
       <h3>${evento.nome}</h3>
       <div class="dettagli">
@@ -75,7 +75,8 @@ function aggiornaMappa(filtro = "tutti") {
         <strong>${evento.nome}</strong><br>
         ${evento.locale}<br>
         🕐 ${evento.orario}<br>
-        💶 ${evento.prezzo}
+        💶 ${evento.prezzo}<br>
+        <a href="evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
       `);
     pinAttivi.push(pin);
   });

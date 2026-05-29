@@ -289,3 +289,58 @@ nav a:hover {
 #btn-citta:hover {
   background: #c1121f;
 }
+
+/* DETTAGLIO EVENTO */
+#dettaglio-container {
+  max-width: 700px;
+  margin: 48px auto;
+  padding: 0 32px;
+}
+
+.dettaglio-header {
+  margin-bottom: 32px;
+}
+
+.dettaglio-header h1 {
+  font-size: 2rem;
+  margin: 8px 0;
+}
+
+.dettaglio-locale {
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+.dettaglio-info {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.info-riga {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #222;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.info-riga:last-child {
+  border-bottom: none;
+}
+
+.dettaglio-descrizione h2 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #aaa;
+  margin-bottom: 12px;
+}
+
+.dettaglio-descrizione p {
+  color: #888;
+  line-height: 1.8;
+}
