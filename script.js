@@ -1,4 +1,4 @@
-// DATI EVENTI (per ora scritti a mano, poi verranno dal database)
+// DATI EVENTI
 const eventi = [
   {
     nome: "Jazz Night",
@@ -8,7 +8,8 @@ const eventi = [
     indirizzo: "Via Po 12, Torino",
     prezzo: "€5",
     lat: 45.0678,
-    lng: 7.6934
+    lng: 7.6934,
+    data: "2026-05-29"
   },
   {
     nome: "DJ Set Techno",
@@ -18,7 +19,8 @@ const eventi = [
     indirizzo: "Via Nichelino 1, Torino",
     prezzo: "€10",
     lat: 45.0521,
-    lng: 7.6678
+    lng: 7.6678,
+    data: "2026-05-30"
   },
   {
     nome: "Live Rock",
@@ -28,7 +30,8 @@ const eventi = [
     indirizzo: "Via Po 21, Torino",
     prezzo: "€8",
     lat: 45.0682,
-    lng: 7.6941
+    lng: 7.6941,
+    data: "2026-05-31"
   },
   {
     nome: "Karaoke Night",
@@ -38,11 +41,12 @@ const eventi = [
     indirizzo: "Piazza Cavour 3, Torino",
     prezzo: "Gratis",
     lat: 45.0748,
-    lng: 7.6823
+    lng: 7.6823,
+    data: "2026-05-29"
   }
 ];
 
-// FUNZIONE: crea una card HTML da un evento
+// CARD
 function creaCard(evento) {
   return `
     <div class="card" data-tipo="${evento.tipo}">
@@ -58,47 +62,40 @@ function creaCard(evento) {
   `;
 }
 
-// FUNZIONE: mostra tutti gli eventi (o filtrati per tipo)
+// MOSTRA EVENTI (lista)
 function mostraEventi(filtro = "tutti") {
   const container = document.getElementById("cards-container");
   const eventiFiltrati = filtro === "tutti"
     ? eventi
     : eventi.filter(e => e.tipo === filtro);
-
   container.innerHTML = eventiFiltrati.map(creaCard).join("");
 }
 
-// FILTRI: click sui bottoni
+// FILTRI
 document.querySelectorAll(".filtro").forEach(bottone => {
   bottone.addEventListener("click", () => {
     document.querySelectorAll(".filtro").forEach(b => b.classList.remove("attivo"));
     bottone.classList.add("attivo");
-    mostraEventi(bottone.dataset.tipo);
+    const filtro = bottone.dataset.tipo;
+    mostraEventi(filtro);
+    aggiornaMappa(filtro);
   });
 });
 
-// AVVIO: mostra tutti gli eventi al caricamento
-mostraEventi();
-
 // MAPPA
 const mappa = L.map('mappa').setView([45.0703, 7.6869], 13);
-
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(mappa);
 
-// PIN SULLA MAPPA
 let pinAttivi = [];
 
 function aggiornaMappa(filtro = "tutti") {
-  // rimuovi pin precedenti
   pinAttivi.forEach(pin => mappa.removeLayer(pin));
   pinAttivi = [];
-
   const eventiFiltrati = filtro === "tutti"
     ? eventi
     : eventi.filter(e => e.tipo === filtro);
-
   eventiFiltrati.forEach(evento => {
     const pin = L.marker([evento.lat, evento.lng])
       .addTo(mappa)
@@ -112,4 +109,90 @@ function aggiornaMappa(filtro = "tutti") {
   });
 }
 
+// CALENDARIO
+let meseCorrente = new Date().getMonth();
+let annoCorrente = new Date().getFullYear();
+
+const mesiNomi = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+                  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+const giorniNomi = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
+
+function renderCalendario(mese, anno) {
+  const griglia = document.getElementById("cal-griglia");
+  const titolo = document.getElementById("mese-titolo");
+  titolo.textContent = `${mesiNomi[mese]} ${anno}`;
+  griglia.innerHTML = "";
+
+  giorniNomi.forEach(g => {
+    const el = document.createElement("div");
+    el.className = "cal-intestazione";
+    el.textContent = g;
+    griglia.appendChild(el);
+  });
+
+  const primoGiorno = new Date(anno, mese, 1).getDay();
+  const offset = primoGiorno === 0 ? 6 : primoGiorno - 1;
+  const giorniNelMese = new Date(anno, mese + 1, 0).getDate();
+
+  for (let i = 0; i < offset; i++) {
+    const vuoto = document.createElement("div");
+    vuoto.className = "cal-giorno vuoto";
+    griglia.appendChild(vuoto);
+  }
+
+  for (let g = 1; g <= giorniNelMese; g++) {
+    const dataStr = `${anno}-${String(mese + 1).padStart(2,"0")}-${String(g).padStart(2,"0")}`;
+    const eventiDelGiorno = eventi.filter(e => e.data === dataStr);
+
+    const cella = document.createElement("div");
+    cella.className = "cal-giorno" + (eventiDelGiorno.length > 0 ? " ha-eventi" : "");
+    cella.innerHTML = g + (eventiDelGiorno.length > 0 ? '<div class="punto"></div>' : "");
+
+    if (eventiDelGiorno.length > 0) {
+      cella.addEventListener("click", () => {
+        const titolo = document.getElementById("eventi-giorno-titolo");
+        const container = document.getElementById("eventi-giorno-container");
+        titolo.textContent = `Eventi del ${g} ${mesiNomi[mese]}`;
+        container.innerHTML = eventiDelGiorno.map(creaCard).join("");
+      });
+    }
+
+    griglia.appendChild(cella);
+  }
+}
+
+document.getElementById("mese-prec").addEventListener("click", () => {
+  meseCorrente--;
+  if (meseCorrente < 0) { meseCorrente = 11; annoCorrente--; }
+  renderCalendario(meseCorrente, annoCorrente);
+});
+
+document.getElementById("mese-succ").addEventListener("click", () => {
+  meseCorrente++;
+  if (meseCorrente > 11) { meseCorrente = 0; annoCorrente++; }
+  renderCalendario(meseCorrente, annoCorrente);
+});
+
+// NAVIGAZIONE VISTE
+document.querySelectorAll(".nav-link").forEach(link => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("attiva"));
+    link.classList.add("attiva");
+
+    const vista = link.dataset.vista;
+    document.getElementById("vista-mappa").style.display = vista === "mappa" ? "block" : "none";
+    document.getElementById("vista-calendario").style.display = vista === "calendario" ? "block" : "none";
+
+    if (vista === "mappa") {
+      setTimeout(() => mappa.invalidateSize(), 100);
+    }
+    if (vista === "calendario") {
+      renderCalendario(meseCorrente, annoCorrente);
+    }
+  });
+});
+
+// AVVIO
+mostraEventi();
 aggiornaMappa();
