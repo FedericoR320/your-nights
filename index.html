@@ -60,24 +60,40 @@
 <!-- VISTA ACCOUNT -->
 <div id="vista-account" style="display:none;">
   <div id="account-container">
-    
-    <!-- FORM LOGIN/REGISTRAZIONE -->
-    <div id="auth-box">
-      <h2 id="auth-titolo">Accedi</h2>
+
+    <!-- STATO 1: LOGIN -->
+    <div id="box-login">
+      <h2>Accedi</h2>
       <input type="email" id="auth-email" placeholder="Email" />
       <input type="password" id="auth-password" placeholder="Password" />
       <button id="btn-login">Accedi</button>
-      <button id="btn-register">Registrati</button>
       <p id="auth-messaggio"></p>
+      <p class="link-switch">Non hai un account? <a href="#" id="link-vai-registrati">Registrati</a></p>
     </div>
 
-    <!-- PROFILO UTENTE (visibile dopo login) -->
-    <div id="profilo-box" style="display:none;">
-      <h2>Il mio account</h2>
-      <p id="profilo-email"></p>
+    <!-- STATO 2: REGISTRAZIONE -->
+    <div id="box-registrazione" style="display:none;">
+      <h2>Registrati</h2>
+      <input type="email" id="reg-email" placeholder="Email" />
+      <input type="text" id="reg-username" placeholder="Username" />
+      <input type="password" id="reg-password" placeholder="Password" />
+      <button id="btn-registrati">Crea account</button>
+      <p id="reg-messaggio"></p>
+      <p class="link-switch">Hai già un account? <a href="#" id="link-vai-login">Accedi</a></p>
+    </div>
+
+    <!-- STATO 3: PROFILO -->
+    <div id="box-profilo" style="display:none;">
+      <p id="profilo-benvenuto"></p>
+      <h2>Le mie serate salvate</h2>
+      <div id="eventi-salvati-container">
+        <p style="color:#666">Nessuna serata salvata ancora.</p>
+      </div>
       <button id="btn-logout">Esci</button>
     </div>
 
+  </div>
+</div>
   </div>
 </div>
   <script src="script.js"></script>

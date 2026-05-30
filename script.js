@@ -254,20 +254,23 @@ async function login() {
   }
 
   localStorage.setItem("yn_token", dati.access_token);
-  localStorage.setItem("yn_email", email);
-  mostraProfiloUtente(email);
+  localStorage.setItem("yn_user_id", dati.user.id);
+
+  await caricaProfiloUtente(dati.user.id);
 }
 
 async function registrati() {
-  const email = document.getElementById("auth-email").value.trim();
-  const password = document.getElementById("auth-password").value.trim();
-  const messaggio = document.getElementById("auth-messaggio");
+  const email = document.getElementById("reg-email").value.trim();
+  const username = document.getElementById("reg-username").value.trim();
+  const password = document.getElementById("reg-password").value.trim();
+  const messaggio = document.getElementById("reg-messaggio");
 
-  if (!email || !password) {
-    messaggio.textContent = "Inserisci email e password.";
+  if (!email || !username || !password) {
+    messaggio.textContent = "Compila tutti i campi.";
     return;
   }
 
+  // 1. crea utente in Supabase Auth
   const res = await fetch(`${SUPABASE_AUTH_URL}/signup`, {
     method: "POST",
     headers: {
@@ -284,30 +287,78 @@ async function registrati() {
     return;
   }
 
-  messaggio.style.color = "#4caf50";
-  messaggio.textContent = "Registrazione completata! Controlla la tua email per confermare.";
+  // 2. salva username nella tabella profili
+  await fetch(`${SUPABASE_URL}/rest/v1/profili`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${dati.access_token}`
+    },
+    body: JSON.stringify({ id: dati.user.id, username })
+  });
+
+  localStorage.setItem("yn_token", dati.access_token);
+  localStorage.setItem("yn_user_id", dati.user.id);
+
+  await caricaProfiloUtente(dati.user.id);
 }
 
-function mostraProfiloUtente(email) {
-  document.getElementById("auth-box").style.display = "none";
-  document.getElementById("profilo-box").style.display = "flex";
-  document.getElementById("profilo-email").textContent = email;
+async function caricaProfiloUtente(userId) {
+  const token = localStorage.getItem("yn_token");
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/profili?id=eq.${userId}&select=*`, {
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const dati = await res.json();
+  const username = dati[0]?.username || "utente";
+
+  localStorage.setItem("yn_username", username);
+  mostraProfiloUtente(username);
+}
+
+function mostraProfiloUtente(username) {
+  document.getElementById("box-login").style.display = "none";
+  document.getElementById("box-registrazione").style.display = "none";
+  document.getElementById("box-profilo").style.display = "flex";
+  document.getElementById("profilo-benvenuto").textContent = `Accesso come ${username}`;
 }
 
 function logout() {
   localStorage.removeItem("yn_token");
-  localStorage.removeItem("yn_email");
-  document.getElementById("auth-box").style.display = "flex";
-  document.getElementById("profilo-box").style.display = "none";
+  localStorage.removeItem("yn_user_id");
+  localStorage.removeItem("yn_username");
+  document.getElementById("box-profilo").style.display = "none";
+  document.getElementById("box-login").style.display = "flex";
 }
 
+// switch login/registrazione
+document.getElementById("link-vai-registrati").addEventListener("click", (e) => {
+  e.preventDefault();
+  document.getElementById("box-login").style.display = "none";
+  document.getElementById("box-registrazione").style.display = "flex";
+});
+
+document.getElementById("link-vai-login").addEventListener("click", (e) => {
+  e.preventDefault();
+  document.getElementById("box-registrazione").style.display = "none";
+  document.getElementById("box-login").style.display = "flex";
+});
+
 document.getElementById("btn-login").addEventListener("click", login);
-document.getElementById("btn-register").addEventListener("click", registrati);
+document.getElementById("btn-registrati").addEventListener("click", registrati);
 document.getElementById("btn-logout").addEventListener("click", logout);
 
 // controlla se utente già loggato
-const emailSalvata = localStorage.getItem("yn_email");
-if (emailSalvata) mostraProfiloUtente(emailSalvata);
+const usernameSalvato = localStorage.getItem("yn_username");
+if (usernameSalvato) mostraProfiloUtente(usernameSalvato);
+
+// AVVIO
+caricaEventi("Torino");
 
 // AVVIO
 caricaEventi("Torino");
