@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -19,14 +20,13 @@
     <nav>
       <a href="#" class="nav-link attiva" data-vista="mappa">Mappa</a>
       <a href="#" class="nav-link" data-vista="calendario">Calendario</a>
-      <button class="nav-link" id="btn-notifiche">🔔</button>
+      <button class="nav-link" id="btn-notifiche"><i data-lucide="bell"></i></button>
       <a href="account.html" id="avatar-link">
-        <div id="avatar">👤</div>
+        <div id="avatar"><i data-lucide="user"></i></div>
       </a>
     </nav>
   </header>
 
-  <!-- VISTA MAPPA -->
   <div id="vista-mappa">
     <section class="filtri">
       <button class="filtro attivo" data-tipo="tutti">Tutti</button>
@@ -38,7 +38,7 @@
     </section>
 
     <div id="btn-geolocal-container">
-      <button id="btn-geolocal">📍 Dove sono adesso</button>
+      <button id="btn-geolocal"><i data-lucide="map-pin"></i> Dove sono adesso</button>
     </div>
 
     <div id="mappa"></div>
@@ -49,12 +49,11 @@
     </section>
   </div>
 
-  <!-- VISTA CALENDARIO -->
   <div id="vista-calendario" style="display:none;">
     <div class="cal-header">
-      <button id="mese-prec">&#8592;</button>
+      <button id="mese-prec"><i data-lucide="arrow-left"></i></button>
       <h2 id="mese-titolo"></h2>
-      <button id="mese-succ">&#8594;</button>
+      <button id="mese-succ"><i data-lucide="arrow-right"></i></button>
     </div>
     <div id="cal-griglia"></div>
     <section id="eventi-giorno">
@@ -65,5 +64,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>

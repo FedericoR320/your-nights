@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dettaglio Evento — Your Nights</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
   <header>
-    <div class="logo">Your Nights</div>
+    <a href="index.html" class="logo">Your Nights</a>
     <nav>
-      <a href="index.html" class="nav-link">← Torna alla mappa</a>
+      <a href="index.html" class="nav-link">
+        <i data-lucide="arrow-left"></i> Torna alla mappa
+      </a>
     </nav>
   </header>
 
@@ -22,5 +25,6 @@
   </div>
 
   <script src="evento.js"></script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>
