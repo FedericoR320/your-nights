@@ -11,17 +11,17 @@
 <body>
 
   <header>
-  <div class="logo">Your Nights</div>
-  <div class="cerca-citta">
-    <input type="text" id="input-citta" placeholder="Cerca città..." />
-    <button id="btn-citta">Vai</button>
-  </div>
-  <nav>
-    <a href="#" class="nav-link attiva" data-vista="mappa">Mappa</a>
-    <a href="#" class="nav-link" data-vista="calendario">Calendario</a>
-    <a href="#" class="nav-link" data-vista="account">Il mio account</a>
-  </nav>
-</header>
+    <div class="logo">Your Nights</div>
+    <div class="cerca-citta">
+      <input type="text" id="input-citta" placeholder="Cerca città..." />
+      <button id="btn-citta">Vai</button>
+    </div>
+    <nav>
+      <a href="#" class="nav-link attiva" data-vista="mappa">Mappa</a>
+      <a href="#" class="nav-link" data-vista="calendario">Calendario</a>
+      <a href="account.html" class="nav-link">Il mio account</a>
+    </nav>
+  </header>
 
   <!-- VISTA MAPPA -->
   <div id="vista-mappa">
@@ -33,11 +33,13 @@
       <button class="filtro" data-tipo="karaoke">Karaoke</button>
       <button class="filtro" data-tipo="sport">Sport</button>
     </section>
-    <!-- GEOLOCALIZZAZIONE -->
-  <div id="btn-geolocal-container">
-    <button id="btn-geolocal">📍 La mia posizione</button>
-  </div>
+
+    <div id="btn-geolocal-container">
+      <button id="btn-geolocal">📍 Dove sono adesso</button>
+    </div>
+
     <div id="mappa"></div>
+
     <section id="lista-eventi">
       <h2>Stasera a Torino</h2>
       <div id="cards-container"></div>
@@ -57,45 +59,7 @@
       <div id="eventi-giorno-container"></div>
     </section>
   </div>
-<!-- VISTA ACCOUNT -->
-<div id="vista-account" style="display:none;">
-  <div id="account-container">
 
-    <!-- STATO 1: LOGIN -->
-    <div id="box-login">
-      <h2>Accedi</h2>
-      <input type="email" id="auth-email" placeholder="Email" />
-      <input type="password" id="auth-password" placeholder="Password" />
-      <button id="btn-login">Accedi</button>
-      <p id="auth-messaggio"></p>
-      <p class="link-switch">Non hai un account? <a href="#" id="link-vai-registrati">Registrati</a></p>
-    </div>
-
-    <!-- STATO 2: REGISTRAZIONE -->
-    <div id="box-registrazione" style="display:none;">
-      <h2>Registrati</h2>
-      <input type="email" id="reg-email" placeholder="Email" />
-      <input type="text" id="reg-username" placeholder="Username" />
-      <input type="password" id="reg-password" placeholder="Password" />
-      <button id="btn-registrati">Crea account</button>
-      <p id="reg-messaggio"></p>
-      <p class="link-switch">Hai già un account? <a href="#" id="link-vai-login">Accedi</a></p>
-    </div>
-
-    <!-- STATO 3: PROFILO -->
-    <div id="box-profilo" style="display:none;">
-      <p id="profilo-benvenuto"></p>
-      <h2>Le mie serate salvate</h2>
-      <div id="eventi-salvati-container">
-        <p style="color:#666">Nessuna serata salvata ancora.</p>
-      </div>
-      <button id="btn-logout">Esci</button>
-    </div>
-
-  </div>
-</div>
-  </div>
-</div>
   <script src="script.js"></script>
 </body>
 </html>
