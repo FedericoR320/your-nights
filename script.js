@@ -253,10 +253,13 @@ async function login() {
     return;
   }
 
-  localStorage.setItem("yn_token", dati.access_token);
-  localStorage.setItem("yn_user_id", dati.user.id);
+const token = dati.access_token || dati.session?.access_token;
+  const userId = dati.user?.id || dati.id;
 
-  await caricaProfiloUtente(dati.user.id);
+  localStorage.setItem("yn_token", token);
+  localStorage.setItem("yn_user_id", userId);
+
+  await caricaProfiloUtente(userId);
 }
 
 async function registrati() {
