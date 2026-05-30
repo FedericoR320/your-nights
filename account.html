@@ -16,52 +16,41 @@
     </nav>
   </header>
 
-  <main class="account-container">
+  <div id="account-container">
 
-    <section id="auth-section" class="account-card">
-      <h1>Il tuo account</h1>
-      <p class="account-subtitle">Accedi o registrati per salvare le tue serate.</p>
+    <!-- LOGIN -->
+    <div id="box-login">
+      <h2>Accedi</h2>
+      <input id="auth-email" type="email" placeholder="Email" />
+      <input id="auth-password" type="password" placeholder="Password" />
+      <button id="btn-login">Accedi</button>
+      <p id="auth-messaggio"></p>
+      <p class="link-switch">Non hai un account? <a id="link-a-registrazione">Registrati</a></p>
+    </div>
 
-      <div class="auth-tabs">
-        <button id="tab-login" class="tab active">Accedi</button>
-        <button id="tab-register" class="tab">Registrati</button>
-      </div>
+    <!-- REGISTRAZIONE -->
+    <div id="box-registrazione" style="display:none">
+      <h2>Crea account</h2>
+      <input id="reg-username" type="text" placeholder="Username" />
+      <input id="reg-email" type="email" placeholder="Email" />
+      <input id="reg-password" type="password" placeholder="Password" />
+      <button id="btn-registrati">Crea account</button>
+      <p id="reg-messaggio"></p>
+      <p class="link-switch">Hai già un account? <a id="link-a-login">Accedi</a></p>
+    </div>
 
-      <div id="login-form" class="auth-form">
-        <input id="login-email" type="email" placeholder="Email" />
-        <input id="login-password" type="password" placeholder="Password" />
-        <button id="btn-login">Accedi</button>
-        <p id="login-message" class="auth-message"></p>
-      </div>
-
-      <div id="register-form" class="auth-form hidden">
-        <input id="register-username" type="text" placeholder="Username" />
-        <input id="register-email" type="email" placeholder="Email" />
-        <input id="register-password" type="password" placeholder="Password" />
-        <button id="btn-register">Crea account</button>
-        <p id="register-message" class="auth-message"></p>
-      </div>
-    </section>
-
-    <section id="profile-section" class="account-card hidden">
-      <div class="profile-header">
-        <div>
-          <h1 id="profile-username">Ciao</h1>
-          <p id="profile-email" class="account-subtitle"></p>
-        </div>
-
-        <button id="btn-logout" class="secondary-button">Logout</button>
-      </div>
-
-      <hr />
-
-      <h2>Le mie serate salvate</h2>
+    <!-- PROFILO -->
+    <div id="box-profilo" style="display:none">
+      <h2 id="profilo-nome">Ciao</h2>
+      <p id="profilo-benvenuto"></p>
+      <button id="btn-logout">Logout</button>
+      <h3 style="margin-top:16px; font-size:0.95rem; text-transform:uppercase; letter-spacing:2px; color:#aaa;">Le mie serate salvate</h3>
       <div id="saved-events">
-        <p class="empty-state">Non hai ancora salvato nessuna serata.</p>
+        <p style="color:#555; font-size:0.9rem;">Non hai ancora salvato nessuna serata.</p>
       </div>
-    </section>
+    </div>
 
-  </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="account.js"></script>
