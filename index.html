@@ -19,7 +19,7 @@
   <nav>
     <a href="#" class="nav-link attiva" data-vista="mappa">Mappa</a>
     <a href="#" class="nav-link" data-vista="calendario">Calendario</a>
-    <a href="#" class="nav-link" data-vista="aggiungi">Aggiungi evento</a>
+    <a href="#" class="nav-link" data-vista="account">Il mio account</a>
   </nav>
 </header>
 
@@ -57,7 +57,29 @@
       <div id="eventi-giorno-container"></div>
     </section>
   </div>
+<!-- VISTA ACCOUNT -->
+<div id="vista-account" style="display:none;">
+  <div id="account-container">
+    
+    <!-- FORM LOGIN/REGISTRAZIONE -->
+    <div id="auth-box">
+      <h2 id="auth-titolo">Accedi</h2>
+      <input type="email" id="auth-email" placeholder="Email" />
+      <input type="password" id="auth-password" placeholder="Password" />
+      <button id="btn-login">Accedi</button>
+      <button id="btn-register">Registrati</button>
+      <p id="auth-messaggio"></p>
+    </div>
 
+    <!-- PROFILO UTENTE (visibile dopo login) -->
+    <div id="profilo-box" style="display:none;">
+      <h2>Il mio account</h2>
+      <p id="profilo-email"></p>
+      <button id="btn-logout">Esci</button>
+    </div>
+
+  </div>
+</div>
   <script src="script.js"></script>
 </body>
 </html>

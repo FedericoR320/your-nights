@@ -1,6 +1,7 @@
 // CONFIGURAZIONE SUPABASE
 const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
+const SUPABASE_AUTH_URL = `${SUPABASE_URL}/auth/v1`;
 
 let eventi = [];
 
@@ -21,7 +22,7 @@ async function caricaEventi(citta = "Torino") {
 // CARD
 function creaCard(evento) {
   return `
-    <div class="card" data-tipo="${evento.tipo}" onclick="window.location.href='evento.html?id=${evento.id}'", style="cursor:pointer">
+    <div class="card" data-tipo="${evento.tipo}" onclick="window.location.href='evento.html?id=${evento.id}'" style="cursor:pointer">
       <div class="tipo">${evento.tipo}</div>
       <h3>${evento.nome}</h3>
       <div class="dettagli">
@@ -154,6 +155,7 @@ document.querySelectorAll(".nav-link").forEach(link => {
     const vista = link.dataset.vista;
     document.getElementById("vista-mappa").style.display = vista === "mappa" ? "block" : "none";
     document.getElementById("vista-calendario").style.display = vista === "calendario" ? "block" : "none";
+    document.getElementById("vista-account").style.display = vista === "account" ? "block" : "none";
 
     if (vista === "mappa") {
       setTimeout(() => mappa.invalidateSize(), 100);
@@ -187,16 +189,14 @@ function cercaCitta() {
 
       document.getElementById("vista-mappa").style.display = "block";
       document.getElementById("vista-calendario").style.display = "none";
+      document.getElementById("vista-account").style.display = "none";
       document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("attiva"));
       document.querySelector("[data-vista='mappa']").classList.add("attiva");
       setTimeout(() => mappa.invalidateSize(), 100);
 
-     caricaEventi(citta.charAt(0).toUpperCase() + citta.slice(1).toLowerCase());
+      caricaEventi(citta.charAt(0).toUpperCase() + citta.slice(1).toLowerCase());
     });
 }
-
-// AVVIO
-caricaEventi("Torino");
 
 // GEOLOCALIZZAZIONE
 document.getElementById("btn-geolocal").addEventListener("click", () => {
@@ -211,7 +211,6 @@ document.getElementById("btn-geolocal").addEventListener("click", () => {
       const lng = position.coords.longitude;
       mappa.setView([lat, lng], 14);
 
-      // marker posizione utente
       L.marker([lat, lng], {
         icon: L.divIcon({
           className: '',
@@ -226,3 +225,89 @@ document.getElementById("btn-geolocal").addEventListener("click", () => {
     }
   );
 });
+
+// AUTENTICAZIONE
+async function login() {
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value.trim();
+  const messaggio = document.getElementById("auth-messaggio");
+
+  if (!email || !password) {
+    messaggio.textContent = "Inserisci email e password.";
+    return;
+  }
+
+  const res = await fetch(`${SUPABASE_AUTH_URL}/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_KEY
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const dati = await res.json();
+
+  if (dati.error) {
+    messaggio.textContent = "Email o password errati.";
+    return;
+  }
+
+  localStorage.setItem("yn_token", dati.access_token);
+  localStorage.setItem("yn_email", email);
+  mostraProfiloUtente(email);
+}
+
+async function registrati() {
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value.trim();
+  const messaggio = document.getElementById("auth-messaggio");
+
+  if (!email || !password) {
+    messaggio.textContent = "Inserisci email e password.";
+    return;
+  }
+
+  const res = await fetch(`${SUPABASE_AUTH_URL}/signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_KEY
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const dati = await res.json();
+
+  if (dati.error) {
+    messaggio.textContent = dati.error.message;
+    return;
+  }
+
+  messaggio.style.color = "#4caf50";
+  messaggio.textContent = "Registrazione completata! Controlla la tua email per confermare.";
+}
+
+function mostraProfiloUtente(email) {
+  document.getElementById("auth-box").style.display = "none";
+  document.getElementById("profilo-box").style.display = "flex";
+  document.getElementById("profilo-email").textContent = email;
+}
+
+function logout() {
+  localStorage.removeItem("yn_token");
+  localStorage.removeItem("yn_email");
+  document.getElementById("auth-box").style.display = "flex";
+  document.getElementById("profilo-box").style.display = "none";
+}
+
+document.getElementById("btn-login").addEventListener("click", login);
+document.getElementById("btn-register").addEventListener("click", registrati);
+document.getElementById("btn-logout").addEventListener("click", logout);
+
+// controlla se utente già loggato
+const emailSalvata = localStorage.getItem("yn_email");
+if (emailSalvata) mostraProfiloUtente(emailSalvata);
+
+// AVVIO
+caricaEventi("Torino");

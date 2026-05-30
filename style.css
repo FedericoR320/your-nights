@@ -408,3 +408,100 @@ nav a:hover {
   background: #e63946;
   color: white;
 }
+
+/* ACCOUNT */
+#account-container {
+  max-width: 400px;
+  margin: 64px auto;
+  padding: 0 32px;
+}
+
+#auth-box, #profilo-box {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#auth-box h2, #profilo-box h2 {
+  font-size: 1.2rem;
+  color: #f0f0f0;
+  margin-bottom: 8px;
+}
+
+#auth-email, #auth-password {
+  background: #111;
+  border: 1px solid #333;
+  color: #f0f0f0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#auth-email:focus, #auth-password:focus {
+  border-color: #e63946;
+}
+
+#btn-login {
+  background: #e63946;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+#btn-login:hover {
+  background: #c1121f;
+}
+
+#btn-register {
+  background: none;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+#btn-register:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+#auth-messaggio {
+  font-size: 0.85rem;
+  color: #e63946;
+  text-align: center;
+  min-height: 20px;
+}
+
+#profilo-email {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+#btn-logout {
+  background: none;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+#btn-logout:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
