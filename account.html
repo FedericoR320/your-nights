@@ -6,50 +6,107 @@
   <title>Account | Your Nights</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <header class="topbar">
+
+  <header>
     <a href="index.html" class="logo">Your Nights</a>
+    <div></div>
     <nav>
-      <a href="index.html">Mappa</a>
-      <a href="account.html" class="active">Account</a>
+      <a href="index.html" class="nav-link">Mappa</a>
+      <a href="index.html" class="nav-link" id="nav-calendario">Calendario</a>
+      <button class="nav-link" id="btn-notifiche">🔔</button>
+      <a href="account.html" id="avatar-link">
+        <div id="avatar">👤</div>
+      </a>
     </nav>
   </header>
 
-  <div id="account-container">
-
-    <!-- LOGIN -->
-    <div id="box-login">
+  <!-- AUTH (non loggato) -->
+  <div id="sezione-auth">
+    <div class="auth-box" id="box-login">
       <h2>Accedi</h2>
-      <input id="auth-email" type="email" placeholder="Email" />
-      <input id="auth-password" type="password" placeholder="Password" />
-      <button id="btn-login">Accedi</button>
-      <p id="auth-messaggio"></p>
-      <p class="link-switch">Non hai un account? <a id="link-a-registrazione">Registrati</a></p>
+      <input class="auth-input" id="auth-email" type="email" placeholder="Email" />
+      <input class="auth-input" id="auth-password" type="password" placeholder="Password" />
+      <button class="btn-primary" id="btn-login">Accedi</button>
+      <p class="auth-messaggio" id="auth-messaggio"></p>
+      <p class="auth-switch">Non hai un account? <a id="link-a-registrazione">Registrati</a></p>
+      <p class="auth-switch"><a id="link-recupera">Password dimenticata?</a></p>
     </div>
 
-    <!-- REGISTRAZIONE -->
-    <div id="box-registrazione" style="display:none">
+    <div class="auth-box" id="box-registrazione" style="display:none">
       <h2>Crea account</h2>
-      <input id="reg-username" type="text" placeholder="Username" />
-      <input id="reg-email" type="email" placeholder="Email" />
-      <input id="reg-password" type="password" placeholder="Password" />
-      <button id="btn-registrati">Crea account</button>
-      <p id="reg-messaggio"></p>
-      <p class="link-switch">Hai già un account? <a id="link-a-login">Accedi</a></p>
+      <input class="auth-input" id="reg-username" type="text" placeholder="Username" />
+      <input class="auth-input" id="reg-email" type="email" placeholder="Email" />
+      <input class="auth-input" id="reg-password" type="password" placeholder="Password" />
+      <button class="btn-primary" id="btn-registrati">Crea account</button>
+      <p class="auth-messaggio" id="reg-messaggio"></p>
+      <p class="auth-switch">Hai già un account? <a id="link-a-login">Accedi</a></p>
     </div>
 
-    <!-- PROFILO -->
-    <div id="box-profilo" style="display:none">
-      <h2 id="profilo-nome">Ciao</h2>
-      <p id="profilo-benvenuto"></p>
-      <button id="btn-logout">Logout</button>
-      <h3 style="margin-top:16px; font-size:0.95rem; text-transform:uppercase; letter-spacing:2px; color:#aaa;">Le mie serate salvate</h3>
-      <div id="saved-events">
-        <p style="color:#555; font-size:0.9rem;">Non hai ancora salvato nessuna serata.</p>
-      </div>
+    <div class="auth-box" id="box-recupera" style="display:none">
+      <h2>Recupera password</h2>
+      <p style="font-size:0.85rem;color:#888;">Inserisci la tua email e ti manderemo un link per reimpostare la password.</p>
+      <input class="auth-input" id="recupera-email" type="email" placeholder="Email" />
+      <button class="btn-primary" id="btn-recupera">Invia link</button>
+      <p class="auth-messaggio" id="recupera-messaggio"></p>
+      <p class="auth-switch"><a id="link-torna-login">Torna al login</a></p>
     </div>
+  </div>
 
+  <!-- PROFILO (loggato) -->
+  <div id="sezione-profilo" style="display:none">
+    <div class="account-page">
+
+      <!-- SIDEBAR SINISTRA -->
+      <aside class="account-sidebar">
+        <a href="index.html" class="sidebar-link">
+          <span class="icon">🗺️</span> Mappa
+        </a>
+        <a href="index.html?vista=calendario" class="sidebar-link">
+          <span class="icon">📅</span> Calendario
+        </a>
+        <div class="sidebar-link" style="border-top:1px solid #222;margin-top:8px;padding-top:12px;color:#555;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">
+          Account
+        </div>
+        <button class="sidebar-link attiva">
+          <span class="icon">⭐</span> Serate salvate
+        </button>
+        <button class="sidebar-link" id="btn-logout-sidebar">
+          <span class="icon">🚪</span> Logout
+        </button>
+      </aside>
+
+      <!-- CENTRO -->
+      <main class="account-main">
+        <h2>Le mie serate salvate</h2>
+        <div id="saved-events-container">
+          <p class="empty-state">Non hai ancora salvato nessuna serata.<br>Esplora la mappa e salva quelle che ti interessano.</p>
+        </div>
+      </main>
+
+      <!-- PROFILO DESTRA -->
+      <aside class="account-profile">
+        <div class="profile-avatar" id="profile-avatar-btn" title="Cambia foto">
+          <span id="avatar-emoji">👤</span>
+          <img id="profile-avatar-img" src="" style="display:none" alt="avatar" />
+          <div class="profile-avatar-hint">Modifica</div>
+        </div>
+        <input type="file" id="input-foto" accept="image/*" style="display:none" />
+
+        <div class="profile-username" id="profile-username">—</div>
+        <div class="profile-email" id="profile-email">—</div>
+
+        <hr class="profile-divider" />
+
+        <div class="profile-stat">
+          <span>Serate salvate</span>
+          <strong id="stat-salvate">0</strong>
+        </div>
+
+        <button class="btn-secondary" id="btn-logout">Logout</button>
+      </aside>
+
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

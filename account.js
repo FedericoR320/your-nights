@@ -3,137 +3,172 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ELEMENTI
+// ELEMENTI AUTH
+const sezioneAuth = document.getElementById("sezione-auth");
+const sezioneProfilo = document.getElementById("sezione-profilo");
 const boxLogin = document.getElementById("box-login");
 const boxRegistrazione = document.getElementById("box-registrazione");
-const boxProfilo = document.getElementById("box-profilo");
+const boxRecupera = document.getElementById("box-recupera");
 
-const authEmail = document.getElementById("auth-email");
-const authPassword = document.getElementById("auth-password");
-const authMessaggio = document.getElementById("auth-messaggio");
-const btnLogin = document.getElementById("btn-login");
-const linkARegistrazione = document.getElementById("link-a-registrazione");
-
-const regUsername = document.getElementById("reg-username");
-const regEmail = document.getElementById("reg-email");
-const regPassword = document.getElementById("reg-password");
-const regMessaggio = document.getElementById("reg-messaggio");
-const btnRegistrati = document.getElementById("btn-registrati");
-const linkALogin = document.getElementById("link-a-login");
-
-const profiloNome = document.getElementById("profilo-nome");
-const profiloBenvenuto = document.getElementById("profilo-benvenuto");
-const btnLogout = document.getElementById("btn-logout");
-
-// SWITCH LOGIN ↔ REGISTRAZIONE
-linkARegistrazione.addEventListener("click", () => {
+// SWITCH TRA FORM
+document.getElementById("link-a-registrazione").addEventListener("click", () => {
   boxLogin.style.display = "none";
   boxRegistrazione.style.display = "flex";
 });
-
-linkALogin.addEventListener("click", () => {
+document.getElementById("link-a-login").addEventListener("click", () => {
   boxRegistrazione.style.display = "none";
+  boxLogin.style.display = "flex";
+});
+document.getElementById("link-recupera").addEventListener("click", () => {
+  boxLogin.style.display = "none";
+  boxRecupera.style.display = "flex";
+});
+document.getElementById("link-torna-login").addEventListener("click", () => {
+  boxRecupera.style.display = "none";
   boxLogin.style.display = "flex";
 });
 
 // LOGIN
-btnLogin.addEventListener("click", async () => {
-  const email = authEmail.value.trim();
-  const password = authPassword.value.trim();
-  authMessaggio.textContent = "";
+document.getElementById("btn-login").addEventListener("click", async () => {
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value.trim();
+  const msg = document.getElementById("auth-messaggio");
+  msg.textContent = "";
 
-  if (!email || !password) {
-    authMessaggio.textContent = "Inserisci email e password.";
-    return;
-  }
+  if (!email || !password) { msg.textContent = "Inserisci email e password."; return; }
 
   const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    authMessaggio.textContent = "Email o password errati.";
-    return;
-  }
-
+  if (error) { msg.textContent = "Email o password errati."; return; }
   await mostraProfilo(data.user);
 });
 
 // REGISTRAZIONE
-btnRegistrati.addEventListener("click", async () => {
-  const username = regUsername.value.trim();
-  const email = regEmail.value.trim();
-  const password = regPassword.value.trim();
-  regMessaggio.textContent = "";
+document.getElementById("btn-registrati").addEventListener("click", async () => {
+  const username = document.getElementById("reg-username").value.trim();
+  const email = document.getElementById("reg-email").value.trim();
+  const password = document.getElementById("reg-password").value.trim();
+  const msg = document.getElementById("reg-messaggio");
+  msg.textContent = "";
 
-  if (!username || !email || !password) {
-    regMessaggio.textContent = "Compila tutti i campi.";
-    return;
-  }
-
-  if (password.length < 6) {
-    regMessaggio.textContent = "La password deve avere almeno 6 caratteri.";
-    return;
-  }
+  if (!username || !email || !password) { msg.textContent = "Compila tutti i campi."; return; }
+  if (password.length < 6) { msg.textContent = "Password minimo 6 caratteri."; return; }
 
   const { data, error } = await supabaseClient.auth.signUp({ email, password });
-
-  if (error) {
-    regMessaggio.textContent = error.message;
-    return;
-  }
+  if (error) { msg.textContent = error.message; return; }
 
   const user = data.user;
-  if (!user) {
-    regMessaggio.textContent = "Registrazione non completata.";
-    return;
-  }
+  if (!user) { msg.textContent = "Registrazione non completata."; return; }
 
-  const { error: profileError } = await supabaseClient
-    .from("profili")
-    .insert({ id: user.id, username });
+  await supabaseClient.from("profili").insert({ id: user.id, username });
 
-  if (profileError) {
-    regMessaggio.textContent = "Account creato, ma errore nel salvataggio username.";
-    return;
-  }
-
-  // Dopo registrazione vai al login con email già compilata
   boxRegistrazione.style.display = "none";
   boxLogin.style.display = "flex";
-  authEmail.value = email;
-  authMessaggio.textContent = "Account creato. Ora accedi.";
+  document.getElementById("auth-email").value = email;
+  document.getElementById("auth-messaggio").textContent = "Account creato! Conferma l'email poi accedi.";
+});
+
+// RECUPERA PASSWORD
+document.getElementById("btn-recupera").addEventListener("click", async () => {
+  const email = document.getElementById("recupera-email").value.trim();
+  const msg = document.getElementById("recupera-messaggio");
+  msg.textContent = "";
+
+  if (!email) { msg.textContent = "Inserisci la tua email."; return; }
+
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://your-nights.vercel.app/account.html"
+  });
+
+  if (error) { msg.textContent = "Errore nell'invio. Riprova."; return; }
+  msg.textContent = "Email inviata! Controlla la tua casella.";
 });
 
 // MOSTRA PROFILO
 async function mostraProfilo(user) {
   const { data: profilo } = await supabaseClient
     .from("profili")
-    .select("username")
+    .select("username, avatar_url")
     .eq("id", user.id)
     .single();
 
-  profiloNome.textContent = profilo?.username ? `Ciao, ${profilo.username}` : "Ciao";
-  profiloBenvenuto.textContent = user.email;
+  document.getElementById("profile-username").textContent = profilo?.username || "Utente";
+  document.getElementById("profile-email").textContent = user.email;
 
-  boxLogin.style.display = "none";
-  boxRegistrazione.style.display = "none";
-  boxProfilo.style.display = "flex";
+  if (profilo?.avatar_url) {
+    document.getElementById("avatar-emoji").style.display = "none";
+    const img = document.getElementById("profile-avatar-img");
+    img.src = profilo.avatar_url;
+    img.style.display = "block";
+    // Aggiorna anche avatar header
+    document.getElementById("avatar").innerHTML = `<img src="${profilo.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+  }
+
+  sezioneAuth.style.display = "none";
+  sezioneProfilo.style.display = "block";
+
+  caricaEventiSalvati(user.id);
 }
 
-// LOGOUT
-btnLogout.addEventListener("click", async () => {
-  await supabaseClient.auth.signOut();
-  boxProfilo.style.display = "none";
-  boxLogin.style.display = "flex";
-  authEmail.value = "";
-  authPassword.value = "";
+// CARICA EVENTI SALVATI
+async function caricaEventiSalvati(userId) {
+  const container = document.getElementById("saved-events-container");
+  const statSalvate = document.getElementById("stat-salvate");
+
+  // Per ora mostra empty state — implementare con tabella eventi_salvati
+  container.innerHTML = `<p class="empty-state">Non hai ancora salvato nessuna serata.<br>Esplora la mappa e salva quelle che ti interessano.</p>`;
+  statSalvate.textContent = "0";
+}
+
+// UPLOAD FOTO PROFILO
+document.getElementById("profile-avatar-btn").addEventListener("click", () => {
+  document.getElementById("input-foto").click();
 });
 
-// CONTROLLA SESSIONE ATTIVA
+document.getElementById("input-foto").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData.session?.user;
+  if (!user) return;
+
+  const ext = file.name.split(".").pop();
+  const path = `avatars/${user.id}.${ext}`;
+
+  const { error: uploadError } = await supabaseClient.storage
+    .from("avatars")
+    .upload(path, file, { upsert: true });
+
+  if (uploadError) { alert("Errore upload foto."); return; }
+
+  const { data: urlData } = supabaseClient.storage.from("avatars").getPublicUrl(path);
+  const avatarUrl = urlData.publicUrl;
+
+  await supabaseClient.from("profili").update({ avatar_url: avatarUrl }).eq("id", user.id);
+
+  document.getElementById("avatar-emoji").style.display = "none";
+  const img = document.getElementById("profile-avatar-img");
+  img.src = avatarUrl;
+  img.style.display = "block";
+  document.getElementById("avatar").innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+});
+
+// LOGOUT
+async function logout() {
+  await supabaseClient.auth.signOut();
+  sezioneProfilo.style.display = "none";
+  sezioneAuth.style.display = "block";
+  boxLogin.style.display = "flex";
+  boxRegistrazione.style.display = "none";
+}
+
+document.getElementById("btn-logout").addEventListener("click", logout);
+document.getElementById("btn-logout-sidebar").addEventListener("click", logout);
+
+// SESSIONE ATTIVA
 async function controllaSessione() {
   const { data } = await supabaseClient.auth.getSession();
-  if (data.session) {
-    await mostraProfilo(data.session.user);
-  }
+  if (data.session) await mostraProfilo(data.session.user);
 }
 
 controllaSessione();

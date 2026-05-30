@@ -11,7 +11,7 @@
 <body>
 
   <header>
-    <div class="logo">Your Nights</div>
+    <a href="index.html" class="logo">Your Nights</a>
     <div class="cerca-citta">
       <input type="text" id="input-citta" placeholder="Cerca città..." />
       <button id="btn-citta">Vai</button>
@@ -19,7 +19,10 @@
     <nav>
       <a href="#" class="nav-link attiva" data-vista="mappa">Mappa</a>
       <a href="#" class="nav-link" data-vista="calendario">Calendario</a>
-      <a href="account.html" class="nav-link">Il mio account</a>
+      <button class="nav-link" id="btn-notifiche">🔔</button>
+      <a href="account.html" id="avatar-link">
+        <div id="avatar">👤</div>
+      </a>
     </nav>
   </header>
 
@@ -60,6 +63,7 @@
     </section>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
 </html>
