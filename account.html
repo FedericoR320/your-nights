@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Il mio account | Your Nights</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="logo">Your Nights</div>
+    <nav>
+      <a href="index.html">Mappa</a>
+      <a href="index.html#calendario">Calendario</a>
+      <a href="account.html">Il mio account</a>
+    </nav>
+  </header>
+
+  <main class="account-page">
+
+    <section id="box-login" class="auth-box">
+      <h1>Accedi</h1>
+
+      <input id="auth-email" type="email" placeholder="Email" />
+      <input id="auth-password" type="password" placeholder="Password" />
+
+      <button id="btn-login">Accedi</button>
+
+      <p id="auth-messaggio" class="auth-message"></p>
+
+      <p>
+        Non hai un account?
+        <a href="#" id="link-vai-registrati">Registrati</a>
+      </p>
+    </section>
+
+    <section id="box-registrazione" class="auth-box" style="display: none;">
+      <h1>Registrati</h1>
+
+      <input id="reg-email" type="email" placeholder="Email" />
+      <input id="reg-username" type="text" placeholder="Username" />
+      <input id="reg-password" type="password" placeholder="Password" />
+
+      <button id="btn-registrati">Registrati</button>
+
+      <p id="reg-messaggio" class="auth-message"></p>
+
+      <p>
+        Hai già un account?
+        <a href="#" id="link-vai-login">Accedi</a>
+      </p>
+    </section>
+
+    <section id="box-profilo" class="auth-box" style="display: none;">
+      <h1>Il mio profilo</h1>
+
+      <p id="profilo-benvenuto"></p>
+
+      <h2>Le mie serate salvate</h2>
+      <div id="eventi-salvati">
+        <p>Non hai ancora salvato nessuna serata.</p>
+      </div>
+
+      <button id="btn-logout">Logout</button>
+    </section>
+
+  </main>
+
+  <script src="account.js"></script>
+</body>
+</html>
