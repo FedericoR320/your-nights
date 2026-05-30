@@ -258,6 +258,8 @@ aggiornaHeader();
 // GESTISCI REDIRECT DA ACCOUNT CON CITTÀ
 const urlParams = new URLSearchParams(window.location.search);
 const cittaParam = urlParams.get("citta");
+const vistaParam = urlParams.get("vista");
+
 if (cittaParam) {
   document.getElementById("input-citta").value = cittaParam;
   caricaEventi(cittaParam.charAt(0).toUpperCase() + cittaParam.slice(1).toLowerCase());
@@ -265,4 +267,9 @@ if (cittaParam) {
   caricaEventi("Torino");
 }
 
-caricaEventi("Torino");
+// APRI DIRETTAMENTE IL CALENDARIO SE RICHIESTO
+if (vistaParam === "calendario") {
+  document.getElementById("vista-mappa").style.display = "none";
+  document.getElementById("vista-calendario").style.display = "block";
+  renderCalendario(meseCorrente, annoCorrente);
+}
