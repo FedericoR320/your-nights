@@ -1,7 +1,6 @@
 // CONFIGURAZIONE SUPABASE
 const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXMiLCJyZWYiOiJid3d2bWZyd3JiYWtsaGhocmZwY2EiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4MDA3NzY1NywiZXhwIjoyMDk1NjUzNjV9.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
-
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ELEMENTI HTML
