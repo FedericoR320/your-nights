@@ -283,7 +283,7 @@ async function registrati() {
     body: JSON.stringify({ email, password })
   });
 
-  const dati = await res.json();
+  console.log("risposta supabase:", dati);
 
   if (dati.error) {
     messaggio.textContent = dati.error.message;
