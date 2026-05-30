@@ -254,138 +254,45 @@ nav a:hover {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex: 1;
+  max-width: 600px;
+  margin: 0 32px;
 }
 
-#input-citta {
+#input-citta, #input-citta-account {
   background: #1e1e1e;
   border: 1px solid #333;
   color: #f0f0f0;
-  padding: 8px 16px;
+  padding: 8px 20px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   outline: none;
   transition: border-color 0.2s;
-  width: 180px;
+  width: 100%;
 }
 
-#input-citta:focus {
+#input-citta:focus, #input-citta-account:focus {
   border-color: #e63946;
 }
 
-#input-citta::placeholder {
+#input-citta::placeholder, #input-citta-account::placeholder {
   color: #555;
 }
 
-#btn-citta {
+#btn-citta, #btn-citta-account {
   background: #e63946;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 8px 20px;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
   transition: background 0.2s;
 }
 
-#btn-citta:hover {
+#btn-citta:hover, #btn-citta-account:hover {
   background: #c1121f;
-}
-
-/* DETTAGLIO EVENTO */
-#dettaglio-container {
-  max-width: 700px;
-  margin: 48px auto;
-  padding: 0 32px;
-}
-
-.dettaglio-header {
-  margin-bottom: 32px;
-}
-
-.dettaglio-header h1 {
-  font-size: 2rem;
-  margin: 8px 0;
-}
-
-.dettaglio-locale {
-  color: #aaa;
-  font-size: 1.1rem;
-}
-
-.dettaglio-info {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 32px;
-}
-
-.info-riga {
-  display: flex;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid #222;
-  font-size: 0.95rem;
-  color: #ccc;
-}
-
-.info-riga:last-child {
-  border-bottom: none;
-}
-
-.dettaglio-descrizione h2 {
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #aaa;
-  margin-bottom: 12px;
-}
-
-.dettaglio-descrizione p {
-  color: #888;
-  line-height: 1.8;
-}
-
-/* RESPONSIVE MOBILE */
-@media (max-width: 768px) {
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 16px;
-  }
-
-  .cerca-citta {
-    width: 100%;
-  }
-
-  #input-citta {
-    width: 100%;
-  }
-
-  nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  nav a {
-    margin-left: 0;
-    font-size: 0.85rem;
-  }
-
-  .filtri {
-    padding: 12px 16px;
-  }
-
-  #lista-eventi {
-    padding: 16px;
-  }
-
-  #dettaglio-container {
-    padding: 0 16px;
-    margin: 24px auto;
-  }
 }
 
 /* GEOLOCALIZZAZIONE */

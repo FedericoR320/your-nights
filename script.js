@@ -1,8 +1,8 @@
-// CONFIGURAZIONE SUPABASE
 const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
 let eventi = [];
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // CARICA EVENTI DA SUPABASE
 async function caricaEventi(citta = "Torino") {
@@ -25,22 +25,23 @@ function creaCard(evento) {
       <div class="tipo">${evento.tipo}</div>
       <h3>${evento.nome}</h3>
       <div class="dettagli">
-        📍 ${evento.locale}<br>
-        🕐 ${evento.orario}<br>
-        📌 ${evento.indirizzo}<br>
-        💶 ${evento.prezzo}
+        <span><i data-lucide="map-pin"></i> ${evento.locale}</span><br>
+        <span><i data-lucide="clock"></i> ${evento.orario}</span><br>
+        <span><i data-lucide="navigation"></i> ${evento.indirizzo}</span><br>
+        <span><i data-lucide="euro"></i> ${evento.prezzo}</span>
       </div>
     </div>
   `;
 }
 
-// MOSTRA EVENTI (lista)
+// MOSTRA EVENTI
 function mostraEventi(filtro = "tutti") {
   const container = document.getElementById("cards-container");
   const eventiFiltrati = filtro === "tutti"
     ? eventi
     : eventi.filter(e => e.tipo === filtro);
   container.innerHTML = eventiFiltrati.map(creaCard).join("");
+  lucide.createIcons();
 }
 
 // FILTRI
@@ -125,6 +126,7 @@ function renderCalendario(mese, anno) {
       cella.addEventListener("click", () => {
         document.getElementById("eventi-giorno-titolo").textContent = `Eventi del ${g} ${mesiNomi[mese]}`;
         document.getElementById("eventi-giorno-container").innerHTML = eventiDelGiorno.map(creaCard).join("");
+        lucide.createIcons();
       });
     }
 
@@ -155,18 +157,14 @@ document.querySelectorAll(".nav-link[data-vista]").forEach(link => {
     document.getElementById("vista-mappa").style.display = vista === "mappa" ? "block" : "none";
     document.getElementById("vista-calendario").style.display = vista === "calendario" ? "block" : "none";
 
-    if (vista === "mappa") {
-      setTimeout(() => mappa.invalidateSize(), 100);
-    }
-    if (vista === "calendario") {
-      renderCalendario(meseCorrente, annoCorrente);
-    }
+    if (vista === "mappa") setTimeout(() => mappa.invalidateSize(), 100);
+    if (vista === "calendario") renderCalendario(meseCorrente, annoCorrente);
   });
 });
 
 // CERCA CITTÀ
 document.getElementById("btn-citta").addEventListener("click", cercaCitta);
-document.getElementById("input-citta").addEventListener("keypress", (e) => {
+document.getElementById("input-citta").addEventListener("keydown", (e) => {
   if (e.key === "Enter") cercaCitta();
 });
 
@@ -177,10 +175,7 @@ function cercaCitta() {
   fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(citta)}&format=json&limit=1`)
     .then(res => res.json())
     .then(dati => {
-      if (dati.length === 0) {
-        alert("Città non trovata, riprova.");
-        return;
-      }
+      if (dati.length === 0) { alert("Città non trovata, riprova."); return; }
       const lat = parseFloat(dati[0].lat);
       const lng = parseFloat(dati[0].lon);
       mappa.setView([lat, lng], 13);
@@ -197,17 +192,13 @@ function cercaCitta() {
 
 // GEOLOCALIZZAZIONE
 document.getElementById("btn-geolocal").addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    alert("Il tuo browser non supporta la geolocalizzazione.");
-    return;
-  }
+  if (!navigator.geolocation) { alert("Il tuo browser non supporta la geolocalizzazione."); return; }
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       mappa.setView([lat, lng], 14);
-
       L.marker([lat, lng], {
         icon: L.divIcon({
           className: '',
@@ -217,21 +208,19 @@ document.getElementById("btn-geolocal").addEventListener("click", () => {
         })
       }).addTo(mappa).bindPopup("Tu sei qui").openPopup();
     },
-    (errore) => {
-      alert("Impossibile ottenere la posizione. Controlla i permessi del browser.");
-    }
+    () => { alert("Impossibile ottenere la posizione. Controlla i permessi del browser."); }
   );
 });
+
 // STATO UTENTE NELL'HEADER
 async function aggiornaHeader() {
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const { data } = await supabaseClient.auth.getSession();
 
   const btnNotifiche = document.getElementById("btn-notifiche");
-  const navSaluto = document.getElementById("nav-saluto");
   const avatarLink = document.getElementById("avatar-link");
   const navAccedi = document.getElementById("nav-accedi");
   const navCalendario = document.querySelector("[data-vista='calendario']");
+  const barraRicerca = document.getElementById("barra-ricerca");
 
   if (data.session) {
     const user = data.session.user;
@@ -241,30 +230,39 @@ async function aggiornaHeader() {
       .eq("id", user.id)
       .single();
 
-    const username = profilo?.username || "utente";
-    navSaluto.textContent = `Ciao, ${username}`;
-    navSaluto.style.display = "inline";
+    // Mostra elementi loggato
     btnNotifiche.style.display = "inline-flex";
     avatarLink.style.display = "inline-flex";
     navAccedi.style.display = "none";
+    barraRicerca.style.display = "flex";
+    if (navCalendario) navCalendario.style.display = "inline";
 
     if (profilo?.avatar_url) {
       document.getElementById("avatar").innerHTML = `<img src="${profilo.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
     }
-
-    // Calendario visibile solo ai loggati
-    if (navCalendario) navCalendario.style.display = "inline";
   } else {
+    // Non loggato — solo Accedi, niente barra ricerca nel nav
     navAccedi.style.display = "inline";
     btnNotifiche.style.display = "none";
     avatarLink.style.display = "none";
-    navSaluto.style.display = "none";
-    // Nascondi calendario
+    barraRicerca.style.display = "none";
     if (navCalendario) navCalendario.style.display = "none";
   }
+
+  lucide.createIcons();
 }
 
+// AVVIO
 aggiornaHeader();
 
-// AVVIO
+// GESTISCI REDIRECT DA ACCOUNT CON CITTÀ
+const urlParams = new URLSearchParams(window.location.search);
+const cittaParam = urlParams.get("citta");
+if (cittaParam) {
+  document.getElementById("input-citta").value = cittaParam;
+  caricaEventi(cittaParam.charAt(0).toUpperCase() + cittaParam.slice(1).toLowerCase());
+} else {
+  caricaEventi("Torino");
+}
+
 caricaEventi("Torino");

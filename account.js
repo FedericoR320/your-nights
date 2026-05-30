@@ -171,4 +171,19 @@ async function controllaSessione() {
   if (data.session) await mostraProfilo(data.session.user);
 }
 
+// CERCA CITTÀ DALLA PAGINA ACCOUNT
+const inputCittaAccount = document.getElementById("input-citta-account");
+const btnCittaAccount = document.getElementById("btn-citta-account");
+
+if (inputCittaAccount) {
+  inputCittaAccount.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      window.location.href = `index.html?citta=${encodeURIComponent(inputCittaAccount.value.trim())}`;
+    }
+  });
+  btnCittaAccount.addEventListener("click", () => {
+    window.location.href = `index.html?citta=${encodeURIComponent(inputCittaAccount.value.trim())}`;
+  });
+}
+
 controllaSessione();
