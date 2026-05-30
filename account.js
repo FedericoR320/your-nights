@@ -1,138 +1,171 @@
 // CONFIGURAZIONE SUPABASE
 const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
-const SUPABASE_AUTH_URL = `${SUPABASE_URL}/auth/v1`;
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXMiLCJyZWYiOiJid3d2bWZyd3JiYWtsaGhocmZwY2EiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4MDA3NzY1NywiZXhwIjoyMDk1NjUzNjV9.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
-async function login() {
-  const email = document.getElementById("auth-email").value.trim();
-  const password = document.getElementById("auth-password").value.trim();
-  const messaggio = document.getElementById("auth-messaggio");
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ELEMENTI HTML
+const authSection = document.getElementById("auth-section");
+const profileSection = document.getElementById("profile-section");
+
+const tabLogin = document.getElementById("tab-login");
+const tabRegister = document.getElementById("tab-register");
+
+const loginForm = document.getElementById("login-form");
+const registerForm = document.getElementById("register-form");
+
+const loginEmail = document.getElementById("login-email");
+const loginPassword = document.getElementById("login-password");
+const loginMessage = document.getElementById("login-message");
+
+const registerUsername = document.getElementById("register-username");
+const registerEmail = document.getElementById("register-email");
+const registerPassword = document.getElementById("register-password");
+const registerMessage = document.getElementById("register-message");
+
+const profileUsername = document.getElementById("profile-username");
+const profileEmail = document.getElementById("profile-email");
+
+const btnLogin = document.getElementById("btn-login");
+const btnRegister = document.getElementById("btn-register");
+const btnLogout = document.getElementById("btn-logout");
+
+// CAMBIO TAB
+tabLogin.addEventListener("click", () => {
+  tabLogin.classList.add("active");
+  tabRegister.classList.remove("active");
+
+  loginForm.classList.remove("hidden");
+  registerForm.classList.add("hidden");
+});
+
+tabRegister.addEventListener("click", () => {
+  tabRegister.classList.add("active");
+  tabLogin.classList.remove("active");
+
+  registerForm.classList.remove("hidden");
+  loginForm.classList.add("hidden");
+});
+
+// REGISTRAZIONE
+btnRegister.addEventListener("click", async () => {
+  const username = registerUsername.value.trim();
+  const email = registerEmail.value.trim();
+  const password = registerPassword.value.trim();
+
+  registerMessage.textContent = "";
+
+  if (!username || !email || !password) {
+    registerMessage.textContent = "Compila tutti i campi.";
+    return;
+  }
+
+  if (password.length < 6) {
+    registerMessage.textContent = "La password deve avere almeno 6 caratteri.";
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    registerMessage.textContent = error.message;
+    return;
+  }
+
+  const user = data.user;
+
+  if (!user) {
+    registerMessage.textContent = "Registrazione non completata.";
+    return;
+  }
+
+  const { error: profileError } = await supabaseClient
+    .from("profili")
+    .insert({
+      id: user.id,
+      username: username
+    });
+
+  if (profileError) {
+    registerMessage.textContent = "Account creato, ma errore nel salvataggio username.";
+    console.error(profileError);
+    return;
+  }
+
+  registerMessage.textContent = "Account creato. Ora accedi.";
+  
+  tabLogin.click();
+  loginEmail.value = email;
+});
+
+// LOGIN
+btnLogin.addEventListener("click", async () => {
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value.trim();
+
+  loginMessage.textContent = "";
 
   if (!email || !password) {
-    messaggio.textContent = "Inserisci email e password.";
+    loginMessage.textContent = "Inserisci email e password.";
     return;
   }
 
-  const res = await fetch(`${SUPABASE_AUTH_URL}/token?grant_type=password`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": SUPABASE_KEY
-    },
-    body: JSON.stringify({ email, password })
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
   });
 
-  const dati = await res.json();
-
-  if (dati.error) {
-    messaggio.textContent = "Email o password errati.";
+  if (error) {
+    loginMessage.textContent = "Email o password errati.";
     return;
   }
 
-  const token = dati.access_token || dati.session?.access_token;
-  const userId = dati.user?.id || dati.id;
-
-  localStorage.setItem("yn_token", token);
-  localStorage.setItem("yn_user_id", userId);
-
-  await caricaProfiloUtente(userId);
-}
-
-async function registrati() {
-  const email = document.getElementById("reg-email").value.trim();
-  const username = document.getElementById("reg-username").value.trim();
-  const password = document.getElementById("reg-password").value.trim();
-  const messaggio = document.getElementById("reg-messaggio");
-
-  if (!email || !username || !password) {
-    messaggio.textContent = "Compila tutti i campi.";
-    return;
-  }
-
-  const res = await fetch(`${SUPABASE_AUTH_URL}/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": SUPABASE_KEY
-    },
-    body: JSON.stringify({ email, password })
-  });
-
-  const dati = await res.json();
-
-  if (dati.error) {
-    messaggio.textContent = dati.error.message;
-    return;
-  }
-
-  const token = dati.access_token || dati.session?.access_token;
-  const userId = dati.user?.id || dati.id;
-
-  await fetch(`${SUPABASE_URL}/rest/v1/profili`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": SUPABASE_KEY,
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({ id: userId, username })
-  });
-
-  localStorage.setItem("yn_token", token);
-  localStorage.setItem("yn_user_id", userId);
-  localStorage.setItem("yn_username", username);
-
-  mostraProfiloUtente(username);
-}
-
-async function caricaProfiloUtente(userId) {
-  const token = localStorage.getItem("yn_token");
-
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/profili?id=eq.${userId}&select=*`, {
-    headers: {
-      "apikey": SUPABASE_KEY,
-      "Authorization": `Bearer ${token}`
-    }
-  });
-
-  const dati = await res.json();
-  const username = dati[0]?.username || "utente";
-
-  localStorage.setItem("yn_username", username);
-  mostraProfiloUtente(username);
-}
-
-function mostraProfiloUtente(username) {
-  document.getElementById("box-login").style.display = "none";
-  document.getElementById("box-registrazione").style.display = "none";
-  document.getElementById("box-profilo").style.display = "flex";
-  document.getElementById("profilo-benvenuto").textContent = `Accesso come ${username}`;
-}
-
-function logout() {
-  localStorage.removeItem("yn_token");
-  localStorage.removeItem("yn_user_id");
-  localStorage.removeItem("yn_username");
-  document.getElementById("box-profilo").style.display = "none";
-  document.getElementById("box-login").style.display = "flex";
-}
-
-document.getElementById("link-vai-registrati").addEventListener("click", (e) => {
-  e.preventDefault();
-  document.getElementById("box-login").style.display = "none";
-  document.getElementById("box-registrazione").style.display = "flex";
+  await mostraAccount(data.user);
 });
 
-document.getElementById("link-vai-login").addEventListener("click", (e) => {
-  e.preventDefault();
-  document.getElementById("box-registrazione").style.display = "none";
-  document.getElementById("box-login").style.display = "flex";
+// MOSTRA ACCOUNT
+async function mostraAccount(user) {
+  if (!user) return;
+
+  const { data: profilo, error } = await supabaseClient
+    .from("profili")
+    .select("username")
+    .eq("id", user.id)
+    .single();
+
+  if (error || !profilo) {
+    profileUsername.textContent = "Ciao";
+  } else {
+    profileUsername.textContent = `Ciao, ${profilo.username}`;
+  }
+
+  profileEmail.textContent = user.email;
+
+  authSection.classList.add("hidden");
+  profileSection.classList.remove("hidden");
+}
+
+// LOGOUT
+btnLogout.addEventListener("click", async () => {
+  await supabaseClient.auth.signOut();
+
+  profileSection.classList.add("hidden");
+  authSection.classList.remove("hidden");
+
+  loginEmail.value = "";
+  loginPassword.value = "";
 });
 
-document.getElementById("btn-login").addEventListener("click", login);
-document.getElementById("btn-registrati").addEventListener("click", registrati);
-document.getElementById("btn-logout").addEventListener("click", logout);
+// CONTROLLO SESSIONE GIÀ ATTIVA
+async function controllaSessione() {
+  const { data } = await supabaseClient.auth.getSession();
 
-// controlla se utente già loggato
-const usernameSalvato = localStorage.getItem("yn_username");
-if (usernameSalvato) mostraProfiloUtente(usernameSalvato);
+  if (data.session) {
+    await mostraAccount(data.session.user);
+  }
+}
+
+controllaSessione();
