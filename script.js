@@ -222,6 +222,49 @@ document.getElementById("btn-geolocal").addEventListener("click", () => {
     }
   );
 });
+// STATO UTENTE NELL'HEADER
+async function aggiornaHeader() {
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const { data } = await supabaseClient.auth.getSession();
+
+  const btnNotifiche = document.getElementById("btn-notifiche");
+  const navSaluto = document.getElementById("nav-saluto");
+  const avatarLink = document.getElementById("avatar-link");
+  const navAccedi = document.getElementById("nav-accedi");
+  const navCalendario = document.querySelector("[data-vista='calendario']");
+
+  if (data.session) {
+    const user = data.session.user;
+    const { data: profilo } = await supabaseClient
+      .from("profili")
+      .select("username, avatar_url")
+      .eq("id", user.id)
+      .single();
+
+    const username = profilo?.username || "utente";
+    navSaluto.textContent = `Ciao, ${username}`;
+    navSaluto.style.display = "inline";
+    btnNotifiche.style.display = "inline-flex";
+    avatarLink.style.display = "inline-flex";
+    navAccedi.style.display = "none";
+
+    if (profilo?.avatar_url) {
+      document.getElementById("avatar").innerHTML = `<img src="${profilo.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+    }
+
+    // Calendario visibile solo ai loggati
+    if (navCalendario) navCalendario.style.display = "inline";
+  } else {
+    navAccedi.style.display = "inline";
+    btnNotifiche.style.display = "none";
+    avatarLink.style.display = "none";
+    navSaluto.style.display = "none";
+    // Nascondi calendario
+    if (navCalendario) navCalendario.style.display = "none";
+  }
+}
+
+aggiornaHeader();
 
 // AVVIO
 caricaEventi("Torino");

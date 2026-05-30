@@ -398,11 +398,19 @@ nav a:hover {
   background: none;
   border: 1px solid #e63946;
   color: #e63946;
-  padding: 8px 20px;
+  padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#btn-geolocal i {
+  width: 14px;
+  height: 14px;
 }
 
 #btn-geolocal:hover {
@@ -719,4 +727,36 @@ nav a:hover {
     flex-direction: row;
     flex-wrap: wrap;
   }
+}
+
+/* PROFILO AVATAR HINT */
+.profile-avatar-hint {
+  font-size: 0.65rem;
+  padding: 2px 0;
+}
+
+/* PROFILO BOTTONI */
+.account-profile .btn-secondary {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.account-profile .btn-secondary i {
+  width: 14px;
+  height: 14px;
+}
+
+/* NAV ALLINEAMENTO */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#nav-saluto {
+  white-space: nowrap;
 }
