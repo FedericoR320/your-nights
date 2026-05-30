@@ -197,3 +197,32 @@ function cercaCitta() {
 
 // AVVIO
 caricaEventi("Torino");
+
+// GEOLOCALIZZAZIONE
+document.getElementById("btn-geolocal").addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    alert("Il tuo browser non supporta la geolocalizzazione.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      mappa.setView([lat, lng], 14);
+
+      // marker posizione utente
+      L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: '',
+          html: '<div style="background:#e63946;width:14px;height:14px;border-radius:50%;border:2px solid white;"></div>',
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        })
+      }).addTo(mappa).bindPopup("Tu sei qui").openPopup();
+    },
+    (errore) => {
+      alert("Impossibile ottenere la posizione. Controlla i permessi del browser.");
+    }
+  );
+});

@@ -386,3 +386,25 @@ nav a:hover {
     margin: 24px auto;
   }
 }
+
+/* GEOLOCALIZZAZIONE */
+#btn-geolocal-container {
+  padding: 12px 32px;
+  background-color: #111;
+}
+
+#btn-geolocal {
+  background: none;
+  border: 1px solid #e63946;
+  color: #e63946;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+#btn-geolocal:hover {
+  background: #e63946;
+  color: white;
+}
