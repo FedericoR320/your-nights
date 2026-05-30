@@ -274,6 +274,41 @@ async function registrati() {
   await caricaProfiloUtente(userId);
 }
 
+async function login() {
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value.trim();
+  const messaggio = document.getElementById("auth-messaggio");
+
+  if (!email || !password) {
+    messaggio.textContent = "Inserisci email e password.";
+    return;
+  }
+
+  const res = await fetch(`${SUPABASE_AUTH_URL}/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_KEY
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const dati = await res.json();
+
+  if (dati.error) {
+    messaggio.textContent = "Email o password errati.";
+    return;
+  }
+
+  const token = dati.access_token || dati.session?.access_token;
+  const userId = dati.user?.id || dati.id;
+
+  localStorage.setItem("yn_token", token);
+  localStorage.setItem("yn_user_id", userId);
+
+  await caricaProfiloUtente(userId);
+}
+
 async function registrati() {
   const email = document.getElementById("reg-email").value.trim();
   const username = document.getElementById("reg-username").value.trim();
