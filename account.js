@@ -119,7 +119,6 @@ async function caricaEventiSalvati(userId) {
   const container = document.getElementById("saved-events-container");
   const statSalvate = document.getElementById("stat-salvate");
 
-  // carica gli ID degli eventi salvati
   const { data: salvati, error } = await supabaseClient
     .from("eventi_salvati")
     .select("evento_id")
@@ -131,7 +130,6 @@ async function caricaEventiSalvati(userId) {
     return;
   }
 
-  // carica i dettagli degli eventi
   const ids = salvati.map(s => s.evento_id);
   const { data: eventi } = await supabaseClient
     .from("Eventi")
@@ -140,14 +138,16 @@ async function caricaEventiSalvati(userId) {
 
   statSalvate.textContent = eventi.length;
 
-    container.innerHTML = eventi.map(e => `
+  container.innerHTML = eventi.map(e => `
     <div class="card" style="position:relative">
-      <button class="btn-salva salvato" onclick="event.stopPropagation(); rimuoviEvento(${e.id}, this)" title="Rimuovi">
-        <span class="salva-label">Rimuovi</span>
-        <i data-lucide="bookmark"></i>
-      </button>
-      <div class="card-img" style="background-image:url('${e.immagine || ''}')" onclick="window.location.href='evento.html?id=${e.id}'"></div>
-      <div class="card-body" onclick="window.location.href='evento.html?id=${e.id}'" style="cursor:pointer">
+      <div class="card-img" style="background-image:url('${e.immagine || ''}'); position:relative;">
+        <div class="card-img-overlay"></div>
+        <button class="btn-salva salvato" data-evento-id="${e.id}" title="Rimuovi" style="position:absolute; top:10px; right:10px; z-index:10;">
+          <span class="salva-label">Rimuovi</span>
+          <i data-lucide="bookmark"></i>
+        </button>
+      </div>
+      <div class="card-body" data-href="evento.html?id=${e.id}" style="cursor:pointer">
         <div class="tipo">${e.tipo}</div>
         <h3>${e.nome}</h3>
         <div class="dettagli">
@@ -159,10 +159,33 @@ async function caricaEventiSalvati(userId) {
     </div>
   `).join("");
 
-lucide.createIcons();
+  lucide.createIcons();
+
+  document.querySelectorAll(".btn-salva").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      rimuoviEvento(parseInt(btn.dataset.eventoId), btn);
+    });
+  });
+
+  document.querySelectorAll(".card-body[data-href]").forEach(body => {
+    body.addEventListener("click", () => {
+      window.location.href = body.dataset.href;
+    });
+  });
+
+  document.querySelectorAll(".card-img").forEach(img => {
+    img.addEventListener("click", (e) => {
+      if (!e.target.closest(".btn-salva")) {
+        const href = img.closest(".card").querySelector(".card-body[data-href]").dataset.href;
+        window.location.href = href;
+      }
+    });
+  });
 }
 
-//RIMUOVI EVENTO SALVATO
+// RIMUOVI EVENTO SALVATO
 async function rimuoviEvento(eventoId, btn) {
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const user = sessionData?.session?.user;
@@ -174,10 +197,8 @@ async function rimuoviEvento(eventoId, btn) {
     .eq("user_id", user.id)
     .eq("evento_id", eventoId);
 
-  // rimuovi la card dalla pagina
   btn.closest(".card").remove();
 
-  // aggiorna contatore
   const statSalvate = document.getElementById("stat-salvate");
   statSalvate.textContent = parseInt(statSalvate.textContent) - 1;
 }
