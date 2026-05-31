@@ -667,3 +667,31 @@ nav {
 #nav-saluto {
   white-space: nowrap;
 }
+
+/* TASTO SALVA */
+.btn-salva {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+.btn-salva:hover {
+  color: #e63946;
+}
+
+.btn-salva.salvato {
+  color: #e63946;
+}
+
+.btn-salva i {
+  width: 18px;
+  height: 18px;
+}

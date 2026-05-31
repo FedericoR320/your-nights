@@ -20,20 +20,29 @@ async function caricaEventi(citta = "Torino") {
 
 // CARD
 function creaCard(evento) {
+  const loggato = !!localStorage.getItem("yn_token");
+  const salvaBtn = `<button class="btn-salva" onclick="salvaEvento(event, ${evento.id})" title="Salva serata">
+    <i data-lucide="bookmark"></i>
+  </button>`;
+
   return `
-    <div class="card" data-tipo="${evento.tipo}" onclick="window.location.href='evento.html?id=${evento.id}'" style="cursor:pointer">
-      <div class="tipo">${evento.tipo}</div>
-      <h3>${evento.nome}</h3>
-      <div class="dettagli">
-        <span><i data-lucide="map-pin"></i> ${evento.locale}</span><br>
-        <span><i data-lucide="clock"></i> ${evento.orario}</span><br>
-        <span><i data-lucide="navigation"></i> ${evento.indirizzo}</span><br>
-        <span><i data-lucide="euro"></i> ${evento.prezzo}</span>
+    <div class="card" data-tipo="${evento.tipo}" style="position:relative">
+      ${loggato ? salvaBtn : `<button class="btn-salva" onclick="apriPopupLogin(event)" title="Accedi per salvare">
+        <i data-lucide="bookmark"></i>
+      </button>`}
+      <div onclick="window.location.href='evento.html?id=${evento.id}'" style="cursor:pointer">
+        <div class="tipo">${evento.tipo}</div>
+        <h3>${evento.nome}</h3>
+        <div class="dettagli">
+          <span><i data-lucide="map-pin"></i> ${evento.locale}</span><br>
+          <span><i data-lucide="clock"></i> ${evento.orario}</span><br>
+          <span><i data-lucide="navigation"></i> ${evento.indirizzo}</span><br>
+          <span><i data-lucide="euro"></i> ${evento.prezzo}</span>
+        </div>
       </div>
     </div>
   `;
 }
-
 // MOSTRA EVENTI
 function mostraEventi(filtro = "tutti") {
   const container = document.getElementById("cards-container");
