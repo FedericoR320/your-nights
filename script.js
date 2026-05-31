@@ -270,23 +270,21 @@ async function salvaEvento(eventoId, btn) {
   const user = sessionData?.session?.user;
   if (!user) { apriPopupLogin(); return; }
 
-  const { error } = await supabaseClient
-    .from("eventi_salvati")
-    .insert({ user_id: user.id, evento_id: eventoId });
-
-  if (error) {
-    if (error.code === "23505") {
-      await supabaseClient
-        .from("eventi_salvati")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("evento_id", eventoId);
-      btn.classList.remove("salvato");
-    }
-    return;
+  if (btn.classList.contains("salvato")) {
+    // rimuovi
+    await supabaseClient
+      .from("eventi_salvati")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("evento_id", eventoId);
+    btn.classList.remove("salvato");
+  } else {
+    // salva
+    await supabaseClient
+      .from("eventi_salvati")
+      .insert({ user_id: user.id, evento_id: eventoId });
+    btn.classList.add("salvato");
   }
-
-  btn.classList.add("salvato");
 }
 
 function apriPopupLogin() {

@@ -140,21 +140,42 @@ async function caricaEventiSalvati(userId) {
 
   statSalvate.textContent = eventi.length;
 
-  container.innerHTML = eventi.map(e => `
-    <div class="card" onclick="window.location.href='evento.html?id=${e.id}'" style="cursor:pointer">
-      <div class="card-img" style="background-image:url('${e.immagine || ''}')"></div>
-      <div class="card-body">
-        <div class="tipo">${e.tipo}</div>
-        <h3>${e.nome}</h3>
-        <div class="dettagli">
-          <span>📍 ${e.locale}</span>
-          <span>🕐 ${e.orario}</span>
-          <span>💶 ${e.prezzo}</span>
+    container.innerHTML = eventi.map(e => `
+        <div class="card" onclick="window.location.href='evento.html?id=${e.id}'" style="cursor:pointer">
+        <div class="card-img" style="background-image:url('${e.immagine || ''}')"></div>
+        <div class="card-body">
+            <div class="tipo">${e.tipo}</div>
+            <h3>${e.nome}</h3>
+            <div class="dettagli">
+                <span>📍 ${e.locale}</span>
+                <span>🕐 ${e.orario}</span>
+            <span>💶 ${e.prezzo}</span>
+            </div>
         </div>
-      </div>
-    </div>
+        </div>
   `).join("");
 }
+
+//RIMUOVI EVENTO SALVATO
+async function rimuoviEvento(eventoId, btn) {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData?.session?.user;
+  if (!user) return;
+
+  await supabaseClient
+    .from("eventi_salvati")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("evento_id", eventoId);
+
+  // rimuovi la card dalla pagina
+  btn.closest(".card").remove();
+
+  // aggiorna contatore
+  const statSalvate = document.getElementById("stat-salvate");
+  statSalvate.textContent = parseInt(statSalvate.textContent) - 1;
+}
+
 
 // UPLOAD FOTO PROFILO
 document.getElementById("profile-avatar-btn").addEventListener("click", () => {
