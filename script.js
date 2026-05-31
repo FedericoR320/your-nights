@@ -251,14 +251,13 @@ async function aggiornaHeader() {
       document.getElementById("avatar").innerHTML = `<img src="${profilo.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
     }
   } else {
-    // Non loggato — solo Accedi, niente barra ricerca nel nav
-    navAccedi.style.display = "inline";
-    btnNotifiche.style.display = "none";
-    avatarLink.style.display = "none";
-    barraRicerca.style.display = "none";
-    if (navCalendario) navCalendario.style.display = "none";
-  }
-
+    //utente non loggato 
+        navAccedi.style.display = "inline";
+        btnNotifiche.style.display = "none";
+        avatarLink.style.display = "none";
+        barraRicerca.style.display = "flex"; // ← cambia da "none" a "flex"
+  if (navCalendario) navCalendario.style.display = "none";
+}
   lucide.createIcons();
 }
 
