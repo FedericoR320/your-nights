@@ -182,7 +182,6 @@ async function rimuoviEvento(eventoId, btn) {
   statSalvate.textContent = parseInt(statSalvate.textContent) - 1;
 }
 
-
 // UPLOAD FOTO PROFILO
 document.getElementById("profile-avatar-btn").addEventListener("click", () => {
   document.getElementById("input-foto").click();
@@ -252,24 +251,6 @@ if (inputCittaAccount) {
   btnCittaAccount.addEventListener("click", () => {
     window.location.href = `index.html?citta=${encodeURIComponent(inputCittaAccount.value.trim())}`;
   });
-}
-
-//FUNZIONA RIMUOVI EVENTO DALLA PAGINA ACCOUNT 
-async function rimuoviEvento(eventoId, btn) {
-  const { data: sessionData } = await supabaseClient.auth.getSession();
-  const user = sessionData?.session?.user;
-  if (!user) return;
-
-  await supabaseClient
-    .from("eventi_salvati")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("evento_id", eventoId);
-
-  btn.closest(".card").remove();
-
-  const statSalvate = document.getElementById("stat-salvate");
-  statSalvate.textContent = parseInt(statSalvate.textContent) - 1;
 }
 
 controllaSessione();
