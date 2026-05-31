@@ -119,9 +119,41 @@ async function caricaEventiSalvati(userId) {
   const container = document.getElementById("saved-events-container");
   const statSalvate = document.getElementById("stat-salvate");
 
-  // Per ora mostra empty state — implementare con tabella eventi_salvati
-  container.innerHTML = `<p class="empty-state">Non hai ancora salvato nessuna serata.<br>Esplora la mappa e salva quelle che ti interessano.</p>`;
-  statSalvate.textContent = "0";
+  // carica gli ID degli eventi salvati
+  const { data: salvati, error } = await supabaseClient
+    .from("eventi_salvati")
+    .select("evento_id")
+    .eq("user_id", userId);
+
+  if (error || !salvati || salvati.length === 0) {
+    container.innerHTML = `<p class="empty-state">Non hai ancora salvato nessuna serata.<br>Esplora la mappa e salva quelle che ti interessano.</p>`;
+    statSalvate.textContent = "0";
+    return;
+  }
+
+  // carica i dettagli degli eventi
+  const ids = salvati.map(s => s.evento_id);
+  const { data: eventi } = await supabaseClient
+    .from("Eventi")
+    .select("*")
+    .in("id", ids);
+
+  statSalvate.textContent = eventi.length;
+
+  container.innerHTML = eventi.map(e => `
+    <div class="card" onclick="window.location.href='evento.html?id=${e.id}'" style="cursor:pointer">
+      <div class="card-img" style="background-image:url('${e.immagine || ''}')"></div>
+      <div class="card-body">
+        <div class="tipo">${e.tipo}</div>
+        <h3>${e.nome}</h3>
+        <div class="dettagli">
+          <span>📍 ${e.locale}</span>
+          <span>🕐 ${e.orario}</span>
+          <span>💶 ${e.prezzo}</span>
+        </div>
+      </div>
+    </div>
+  `).join("");
 }
 
 // UPLOAD FOTO PROFILO

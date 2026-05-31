@@ -16,6 +16,10 @@ async function caricaEventi(citta = "Torino") {
   mostraEventi();
   aggiornaMappa();
   document.querySelector("#lista-eventi h2").textContent = `Stasera a ${citta}`;
+  mostraEventi();
+  aggiornaMappa();
+  document.querySelector("#lista-eventi h2").textContent = `Stasera a ${citta}`;
+  await aggiornaStatoSalvataggi(); // ← aggiungi questa riga
 }
 
 // CARD
@@ -292,6 +296,30 @@ function apriPopupLogin() {
 
 function chiudiPopupLogin() {
   document.getElementById("popup-login").style.display = "none";
+}
+
+async function aggiornaStatoSalvataggi() {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData?.session?.user;
+  if (!user) return;
+
+  const { data: salvati } = await supabaseClient
+    .from("eventi_salvati")
+    .select("evento_id")
+    .eq("user_id", user.id);
+
+  if (!salvati || salvati.length === 0) return;
+
+  const idsSalvati = salvati.map(s => s.evento_id);
+
+  document.querySelectorAll(".card").forEach(card => {
+    const btn = card.querySelector(".btn-salva");
+    if (!btn) return;
+    const eventoId = parseInt(btn.getAttribute("onclick").match(/salvaEvento\((\d+)/)?.[1]);
+    if (idsSalvati.includes(eventoId)) {
+      btn.classList.add("salvato");
+    }
+  });
 }
 
 // AVVIO
