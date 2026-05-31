@@ -261,6 +261,15 @@ async function aggiornaHeader() {
   lucide.createIcons();
 }
 
+function apriPopupLogin() {
+  document.getElementById("popup-login").style.display = "flex";
+  lucide.createIcons();
+}
+
+function chiudiPopupLogin() {
+  document.getElementById("popup-login").style.display = "none";
+}
+
 // AVVIO
 aggiornaHeader();
 

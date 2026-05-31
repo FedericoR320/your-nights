@@ -64,6 +64,19 @@
     </section>
   </div>
 
+  <!-- POPUP LOGIN -->
+<div id="popup-login" style="display:none">
+  <div id="popup-overlay" onclick="chiudiPopupLogin()"></div>
+  <div id="popup-box">
+    <button id="popup-close" onclick="chiudiPopupLogin()"><i data-lucide="x"></i></button>
+    <i data-lucide="bookmark" id="popup-icon"></i>
+    <h2>Salva questa serata</h2>
+    <p>Accedi per salvare le serate che ti interessano e ritrovarle nel tuo calendario personale.</p>
+    <a href="account.html" class="btn-primary" id="popup-btn-accedi">Accedi</a>
+    <a href="account.html#registrati" class="btn-secondary" id="popup-btn-registrati">Crea account</a>
+  </div>
+</div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
   <script>lucide.createIcons();</script>
