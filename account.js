@@ -85,7 +85,12 @@ document.getElementById("btn-recupera").addEventListener("click", async () => {
 
 // MOSTRA PROFILO
 async function mostraProfilo(user) {
-  const { data: profilo } = await supabaseClient
+    // nascondi link mappa, mostra campanella e avatar
+    document.getElementById("nav-mappa").style.display = "none";
+    document.getElementById("btn-notifiche").style.display = "inline-flex";
+    document.getElementById("avatar-link").style.display = "inline-flex";
+
+    const { data: profilo } = await supabaseClient
     .from("profili")
     .select("username, avatar_url")
     .eq("id", user.id)
@@ -155,11 +160,15 @@ document.getElementById("input-foto").addEventListener("change", async (e) => {
 
 // LOGOUT
 async function logout() {
-  await supabaseClient.auth.signOut();
-  sezioneProfilo.style.display = "none";
-  sezioneAuth.style.display = "block";
-  boxLogin.style.display = "flex";
-  boxRegistrazione.style.display = "none";
+    document.getElementById("nav-mappa").style.display = "inline";
+    document.getElementById("btn-notifiche").style.display = "none";
+    document.getElementById("avatar-link").style.display = "none";
+    
+    await supabaseClient.auth.signOut();
+    sezioneProfilo.style.display = "none";
+    sezioneAuth.style.display = "block";
+    boxLogin.style.display = "flex";
+    boxRegistrazione.style.display = "none";
 }
 
 document.getElementById("btn-logout").addEventListener("click", logout);
