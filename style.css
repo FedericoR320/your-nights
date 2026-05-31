@@ -95,7 +95,7 @@ nav a:hover {
 /* CARDS */
 #cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
 }
 
@@ -103,8 +103,9 @@ nav a:hover {
   background: #1a1a1a;
   border: 1px solid #2a2a2a;
   border-radius: 12px;
-  padding: 20px;
+  overflow: hidden;
   transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
 }
 
 .card:hover {
@@ -112,23 +113,103 @@ nav a:hover {
   border-color: #e63946;
 }
 
+.card-img {
+  width: 100%;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.card-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%);
+  border-radius: 0;
+}
+
+.card-body {
+  padding: 16px 20px 20px;
+}
+
 .card .tipo {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #e63946;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .card h3 {
   font-size: 1rem;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
+  color: #f0f0f0;
 }
 
 .card .dettagli {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: #888;
-  line-height: 1.6;
+  line-height: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card .dettagli span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card .dettagli i {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: #555;
+}
+
+/* TASTO SALVA */
+.btn-salva {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 20px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  backdrop-filter: blur(4px);
+}
+
+.btn-salva:hover {
+  background: #e63946;
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-salva.salvato {
+  background: #e63946;
+  color: white;
+}
+
+.btn-salva i {
+  width: 15px;
+  height: 15px;
+}
+
+.salva-label {
+  display: none;
+  white-space: nowrap;
+}
+
+.btn-salva:hover .salva-label {
+  display: inline;
 }
 
 /* NAVIGAZIONE VISTE */
