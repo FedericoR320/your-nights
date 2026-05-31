@@ -261,6 +261,30 @@ async function aggiornaHeader() {
   lucide.createIcons();
 }
 
+async function salvaEvento(eventoId, btn) {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData?.session?.user;
+  if (!user) { apriPopupLogin(); return; }
+
+  const { error } = await supabaseClient
+    .from("eventi_salvati")
+    .insert({ user_id: user.id, evento_id: eventoId });
+
+  if (error) {
+    if (error.code === "23505") {
+      await supabaseClient
+        .from("eventi_salvati")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("evento_id", eventoId);
+      btn.classList.remove("salvato");
+    }
+    return;
+  }
+
+  btn.classList.add("salvato");
+}
+
 function apriPopupLogin() {
   document.getElementById("popup-login").style.display = "flex";
   lucide.createIcons();
