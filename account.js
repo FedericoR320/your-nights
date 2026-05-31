@@ -141,19 +141,25 @@ async function caricaEventiSalvati(userId) {
   statSalvate.textContent = eventi.length;
 
     container.innerHTML = eventi.map(e => `
-        <div class="card" onclick="window.location.href='evento.html?id=${e.id}'" style="cursor:pointer">
-        <div class="card-img" style="background-image:url('${e.immagine || ''}')"></div>
-        <div class="card-body">
-            <div class="tipo">${e.tipo}</div>
-            <h3>${e.nome}</h3>
-            <div class="dettagli">
-                <span>📍 ${e.locale}</span>
-                <span>🕐 ${e.orario}</span>
-            <span>💶 ${e.prezzo}</span>
-            </div>
+    <div class="card" style="position:relative">
+      <button class="btn-salva salvato" onclick="event.stopPropagation(); rimuoviEvento(${e.id}, this)" title="Rimuovi">
+        <span class="salva-label">Rimuovi</span>
+        <i data-lucide="bookmark"></i>
+      </button>
+      <div class="card-img" style="background-image:url('${e.immagine || ''}')" onclick="window.location.href='evento.html?id=${e.id}'"></div>
+      <div class="card-body" onclick="window.location.href='evento.html?id=${e.id}'" style="cursor:pointer">
+        <div class="tipo">${e.tipo}</div>
+        <h3>${e.nome}</h3>
+        <div class="dettagli">
+          <span>📍 ${e.locale}</span>
+          <span>🕐 ${e.orario}</span>
+          <span>💶 ${e.prezzo}</span>
         </div>
-        </div>
+      </div>
+    </div>
   `).join("");
+
+lucide.createIcons();
 }
 
 //RIMUOVI EVENTO SALVATO
