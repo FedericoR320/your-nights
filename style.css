@@ -1087,3 +1087,68 @@ nav {
   position: absolute;
   pointer-events: none;
 }
+
+/* CONTROLLI DATA MAPPA */
+.mappa-controlli {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 32px;
+  background: #111;
+  border-top: 1px solid #222;
+  flex-wrap: wrap;
+}
+
+.date-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-chip,
+.date-calendar-btn {
+  background: #1e1e1e;
+  color: #ccc;
+  border: 1px solid #333;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.date-chip:hover,
+.date-calendar-btn:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+.date-chip.attivo {
+  background: #e63946;
+  border-color: #e63946;
+  color: white;
+}
+
+.date-calendar-btn {
+  width: 38px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-calendar-btn i {
+  width: 17px;
+  height: 17px;
+}
+
+#filtro-data-eventi {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  border: none;
+  padding: 0;
+  position: absolute;
+}

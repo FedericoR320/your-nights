@@ -399,9 +399,18 @@ document.getElementById("filtro-data-eventi").addEventListener("change", (e) => 
   aggiornaStatoSalvataggi();
 });
 
-document.querySelector(".date-picker-label").addEventListener("click", () => {
-  document.getElementById("filtro-data-eventi").showPicker?.();
-});
+const btnCalendarioData = document.getElementById("btn-calendario-data");
+const inputDataEventi = document.getElementById("filtro-data-eventi");
+
+if (btnCalendarioData && inputDataEventi) {
+  btnCalendarioData.addEventListener("click", () => {
+    if (inputDataEventi.showPicker) {
+      inputDataEventi.showPicker();
+    } else {
+      inputDataEventi.click();
+    }
+  });
+}
 
 // AVVIO
 document.getElementById("filtro-data-eventi").value = dataSelezionata;

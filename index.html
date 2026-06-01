@@ -46,19 +46,26 @@
     </section>
 
     <div class="mappa-controlli">
-      <div class="date-toolbar">
-        <button id="giorno-prec" class="date-btn">
-          <i data-lucide="chevron-left"></i>
-        </button>
-      <button id="btn-oggi" class="date-chip attivo">Oggi</button>
-      <button id="btn-domani" class="date-chip">Domani</button>
+  <div class="date-toolbar">
 
-      <input type="date" id="filtro-data-eventi" />
+    <button id="btn-oggi" class="date-chip attivo">
+      Oggi
+    </button>
 
-      <button id="giorno-succ" class="date-btn">
-        <i data-lucide="chevron-right"></i>
-      </button>
-    </div>
+    <button id="btn-domani" class="date-chip">
+      Domani
+    </button>
+
+    <button id="btn-dopodomani" class="date-chip">
+      Dopodomani
+    </button>
+
+    <button id="btn-calendario-data" class="date-calendar-btn" type="button">
+      <i data-lucide="calendar"></i>
+    </button>
+
+    <input type="date" id="filtro-data-eventi">
+  </div>
   
   <button id="btn-geolocal">
     <i data-lucide="map-pin"></i> Dove sono adesso
