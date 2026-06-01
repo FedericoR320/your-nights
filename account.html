@@ -5,24 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Account | Your Nights</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
   <header>
     <a href="index.html" class="logo">Your Nights</a>
-
-    <div class="cerca-citta">
+    <div class="cerca-citta" id="barra-ricerca-account">
       <input type="text" id="input-citta-account" placeholder="Cerca città..." />
       <button id="btn-citta-account">Vai</button>
     </div>
-
     <nav>
-        <button class="nav-link" id="btn-notifiche" style="display:none"><i data-lucide="bell"></i></button>
-        <a href="account.html" id="avatar-link" style="display:none">
-           <div id="avatar"><i data-lucide="user"></i></div>
-        </a>
-        <a href="index.html" id="nav-mappa" class="nav-link">Mappa</a>
+      <a href="index.html" class="nav-link" id="nav-mappa-account">Mappa</a>
+      <button class="nav-link" id="btn-notifiche" style="display:none"><i data-lucide="bell"></i></button>
+      <a href="account.html" id="avatar-link" style="display:none">
+        <div id="avatar"><i data-lucide="user"></i></div>
+      </a>
     </nav>
   </header>
 
@@ -62,53 +62,54 @@
   <div id="sezione-profilo" style="display:none">
     <div class="account-page">
 
+      <!-- SINISTRA — NAVIGAZIONE FUNZIONI -->
       <aside class="account-sidebar">
-        <a href="index.html" class="sidebar-link">
-          <i data-lucide="map"></i> Mappa
-        </a>
-        <a href="index.html?vista=calendario" class="sidebar-link">
-          <i data-lucide="calendar"></i> Calendario
-        </a>
-        <div class="sidebar-link" style="border-top:1px solid #222;margin-top:8px;padding-top:12px;color:#555;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">
-          Account
-        </div>
         <button class="sidebar-link attiva" id="btn-sidebar-salvate">
-            <i data-lucide="bookmark"></i> Serate salvate
+          <i data-lucide="bookmark"></i> Serate salvate
         </button>
         <button class="sidebar-link" id="btn-sidebar-calendario">
-            <i data-lucide="calendar"></i> Calendario
+          <i data-lucide="calendar"></i> Calendario
         </button>
-        <button class="sidebar-link" id="btn-logout-sidebar">
-            <i data-lucide="log-out"></i> Logout
+        <button class="sidebar-link" id="btn-sidebar-mappa">
+          <i data-lucide="map"></i> Mappa personale
         </button>
       </aside>
 
+      <!-- CENTRO — CONTENUTO -->
       <main class="account-main">
-        <!-- VISTA SERATE SALVATE -->
+
+        <!-- SERATE SALVATE -->
         <div id="vista-salvate">
-            <h2>Le mie serate salvate</h2>
-            <div id="saved-events-container">
+          <h2>Le mie serate salvate</h2>
+          <div id="saved-events-container">
             <p class="empty-state">Non hai ancora salvato nessuna serata.<br>Esplora la mappa e salva quelle che ti interessano.</p>
-            </div>
+          </div>
         </div>
 
-        <!-- VISTA CALENDARIO -->
+        <!-- CALENDARIO PERSONALE -->
         <div id="vista-cal-account" style="display:none">
-            <h2>Il mio calendario</h2>
-            <div class="cal-header">
+          <h2>Il mio calendario</h2>
+          <div class="cal-header">
             <button id="cal-prec">&#8592;</button>
             <h3 id="cal-titolo"></h3>
             <button id="cal-succ">&#8594;</button>
-            </div>
-            <div id="cal-griglia-account"></div>
-            <div id="cal-eventi-giorno">
+          </div>
+          <div id="cal-griglia-account"></div>
+          <div id="cal-eventi-giorno">
             <h3 id="cal-giorno-titolo"></h3>
             <div id="cal-giorno-container"></div>
-            </div>
+          </div>
         </div>
 
-        </main>
+        <!-- MAPPA PERSONALE -->
+        <div id="vista-mappa-account" style="display:none">
+          <h2>Le mie serate sulla mappa</h2>
+          <div id="mappa-account"></div>
+        </div>
 
+      </main>
+
+      <!-- DESTRA — PROFILO E IMPOSTAZIONI -->
       <aside class="account-profile">
         <div class="profile-avatar" id="profile-avatar-btn" title="Cambia foto">
           <span id="avatar-emoji"><i data-lucide="user"></i></span>
@@ -127,14 +128,26 @@
           <strong id="stat-salvate">0</strong>
         </div>
 
-        <button class="btn-secondary" id="btn-logout">
-          <i data-lucide="log-out"></i> Logout
-        </button>
+        <hr class="profile-divider" />
+
+        <div class="profile-settings">
+          <button class="settings-link" id="btn-impostazioni">
+            <i data-lucide="settings"></i> Impostazioni
+          </button>
+          <button class="settings-link" id="btn-privacy">
+            <i data-lucide="shield"></i> Privacy
+          </button>
+          <button class="settings-link btn-logout-settings" id="btn-logout">
+            <i data-lucide="log-out"></i> Logout
+          </button>
+        </div>
+
       </aside>
 
     </div>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="account.js"></script>
   <script>lucide.createIcons();</script>
