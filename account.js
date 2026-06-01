@@ -43,10 +43,14 @@ function mostraVista(nomeVista) {
   }
 
   if (nomeVista === "mappa") {
-    setTimeout(() => {
-      renderMappaAccount();
-    }, 150);
-  }
+  setTimeout(() => {
+    renderMappaAccount();
+
+    if (mappaAccount) {
+      mappaAccount.invalidateSize();
+    }
+  }, 300);
+}
 }
 
 async function registrati() {
@@ -415,7 +419,11 @@ function renderMappaAccount() {
   const gruppo = L.featureGroup(markerAccount);
   mappaAccount.fitBounds(gruppo.getBounds().pad(0.2));
 
-  setTimeout(() => mappaAccount.invalidateSize(), 100);
+  setTimeout(() => {
+  if (mappaAccount) {
+    mappaAccount.invalidateSize();
+  }
+}, 300);
 }
 
 async function uploadAvatar(e) {
