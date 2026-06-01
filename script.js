@@ -91,13 +91,19 @@ function mostraEventi() {
   lucide.createIcons();
 }
 
-// FILTRI
-document.querySelectorAll(".filtro").forEach(bottone => {
+// MENU FILTRI
+document.getElementById("btn-apri-tipi").addEventListener("click", () => {
+  document.getElementById("menu-tipi").classList.toggle("aperto");
+});
+
+document.querySelectorAll(".tipo-opzione").forEach(bottone => {
   bottone.addEventListener("click", () => {
-    document.querySelectorAll(".filtro").forEach(b => b.classList.remove("attivo"));
+    document.querySelectorAll(".tipo-opzione").forEach(b => b.classList.remove("attivo"));
     bottone.classList.add("attivo");
 
     filtroTipoCorrente = bottone.dataset.tipo;
+
+    document.getElementById("menu-tipi").classList.remove("aperto");
 
     mostraEventi();
     aggiornaMappa();

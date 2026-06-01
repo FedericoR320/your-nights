@@ -36,17 +36,24 @@
   </header>
 
   <div id="vista-mappa">
-    <section class="filtri">
-      <button class="filtro attivo" data-tipo="tutti">Tutti</button>
-      <button class="filtro" data-tipo="jazz">Jazz</button>
-      <button class="filtro" data-tipo="live">Live Music</button>
-      <button class="filtro" data-tipo="dj">DJ Set</button>
-      <button class="filtro" data-tipo="karaoke">Karaoke</button>
-      <button class="filtro" data-tipo="sport">Sport</button>
-    </section>
-
     <div class="mappa-controlli">
-  <div class="date-toolbar">
+    <div class="tipo-dropdown">
+      <button id="btn-apri-tipi" class="tipo-dropdown-btn">
+        <i data-lucide="sliders-horizontal"></i>
+        Filtra serate
+      </button>
+
+      <div id="menu-tipi" class="tipo-dropdown-menu">
+        <button class="tipo-opzione attivo" data-tipo="tutti">Tutti</button>
+        <button class="tipo-opzione" data-tipo="jazz">Jazz</button>
+        <button class="tipo-opzione" data-tipo="live">Live Music</button>
+        <button class="tipo-opzione" data-tipo="dj">DJ Set</button>
+        <button class="tipo-opzione" data-tipo="karaoke">Karaoke</button>
+        <button class="tipo-opzione" data-tipo="sport">Sport</button>
+      </div>
+    </div>
+
+    <div class="date-toolbar">
 
     <button id="btn-oggi" class="date-chip attivo">
       Oggi
