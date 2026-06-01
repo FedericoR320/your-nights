@@ -75,17 +75,26 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(mappa);
 
-let pinAttivi = [];
+let clusterEventi = L.markerClusterGroup({
+  showCoverageOnHover: false,
+  spiderfyOnMaxZoom: true,
+  disableClusteringAtZoom: 17,
+  maxClusterRadius: 45
+});
+
+mappa.addLayer(clusterEventi);
 
 function aggiornaMappa(filtro = "tutti") {
-  pinAttivi.forEach(pin => mappa.removeLayer(pin));
-  pinAttivi = [];
+  clusterEventi.clearLayers();
+
   const eventiFiltrati = filtro === "tutti"
     ? eventi
     : eventi.filter(e => e.tipo === filtro);
+
   eventiFiltrati.forEach(evento => {
+    if (!evento.lat || !evento.lng) return;
+
     const pin = L.marker([evento.lat, evento.lng])
-      .addTo(mappa)
       .bindPopup(`
         <strong>${evento.nome}</strong><br>
         ${evento.locale}<br>
@@ -93,7 +102,8 @@ function aggiornaMappa(filtro = "tutti") {
         💶 ${evento.prezzo}<br>
         <a href="evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
       `);
-    pinAttivi.push(pin);
+
+    clusterEventi.addLayer(pin);
   });
 }
 

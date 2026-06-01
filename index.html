@@ -8,6 +8,9 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
+  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
 
@@ -39,11 +42,27 @@
       <button class="filtro" data-tipo="sport">Sport</button>
     </section>
 
-    <div id="btn-geolocal-container">
-      <button id="btn-geolocal"><i data-lucide="map-pin"></i> Dove sono adesso</button>
+    <div class="mappa-controlli">
+      <div class="date-toolbar">
+        <button id="giorno-prec" class="date-btn">
+          <i data-lucide="chevron-left"></i>
+        </button>
+      <button id="btn-oggi" class="date-chip attivo">Oggi</button>
+      <button id="btn-domani" class="date-chip">Domani</button>
+
+      <input type="date" id="filtro-data-eventi" />
+
+      <button id="giorno-succ" class="date-btn">
+        <i data-lucide="chevron-right"></i>
+      </button>
     </div>
 
-    <div id="mappa"></div>
+  <button id="btn-geolocal">
+    <i data-lucide="map-pin"></i> Dove sono adesso
+  </button>
+</div>
+
+<div id="mappa"></div>
 
     <section id="lista-eventi">
       <h2>Stasera a Torino</h2>
