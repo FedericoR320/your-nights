@@ -2,7 +2,31 @@ const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
 let eventi = [];
+let filtroTipoCorrente = "tutti";
+let dataSelezionata = dataLocale(new Date());
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function dataLocale(data) {
+  const anno = data.getFullYear();
+  const mese = String(data.getMonth() + 1).padStart(2, "0");
+  const giorno = String(data.getDate()).padStart(2, "0");
+  return `${anno}-${mese}-${giorno}`;
+}
+
+function aggiungiGiorni(data, giorni) {
+  const nuovaData = new Date(data);
+  nuovaData.setDate(nuovaData.getDate() + giorni);
+  return nuovaData;
+}
+
+function getEventiVisibili() {
+  return eventi.filter(e => {
+    const matchTipo = filtroTipoCorrente === "tutti" || e.tipo === filtroTipoCorrente;
+    const matchData = e.data === dataSelezionata;
+    return matchTipo && matchData;
+  });
+}
 
 // CARICA EVENTI DA SUPABASE
 async function caricaEventi(citta = "Torino") {
@@ -12,14 +36,15 @@ async function caricaEventi(citta = "Torino") {
       "Authorization": `Bearer ${SUPABASE_KEY}`
     }
   });
+
   eventi = await res.json();
+
   mostraEventi();
   aggiornaMappa();
-  document.querySelector("#lista-eventi h2").textContent = `Stasera a ${citta}`;
-  mostraEventi();
-  aggiornaMappa();
-  document.querySelector("#lista-eventi h2").textContent = `Stasera a ${citta}`;
-  await aggiornaStatoSalvataggi(); // ← aggiungi questa riga
+
+  document.querySelector("#lista-eventi h2").textContent = `Eventi a ${citta}`;
+
+  await aggiornaStatoSalvataggi();
 }
 
 // CARD
@@ -49,12 +74,20 @@ function creaCard(evento) {
   `;
 }
 // MOSTRA EVENTI
-function mostraEventi(filtro = "tutti") {
+function mostraEventi() {
   const container = document.getElementById("cards-container");
-  const eventiFiltrati = filtro === "tutti"
-    ? eventi
-    : eventi.filter(e => e.tipo === filtro);
-  container.innerHTML = eventiFiltrati.map(creaCard).join("");
+  const eventiVisibili = getEventiVisibili();
+
+  if (eventiVisibili.length === 0) {
+    container.innerHTML = `
+      <p class="empty-state">
+        Nessun evento trovato per questa data.
+      </p>
+    `;
+    return;
+  }
+
+  container.innerHTML = eventiVisibili.map(creaCard).join("");
   lucide.createIcons();
 }
 
@@ -63,9 +96,12 @@ document.querySelectorAll(".filtro").forEach(bottone => {
   bottone.addEventListener("click", () => {
     document.querySelectorAll(".filtro").forEach(b => b.classList.remove("attivo"));
     bottone.classList.add("attivo");
-    const filtro = bottone.dataset.tipo;
-    mostraEventi(filtro);
-    aggiornaMappa(filtro);
+
+    filtroTipoCorrente = bottone.dataset.tipo;
+
+    mostraEventi();
+    aggiornaMappa();
+    aggiornaStatoSalvataggi();
   });
 });
 
@@ -84,12 +120,10 @@ let clusterEventi = L.markerClusterGroup({
 
 mappa.addLayer(clusterEventi);
 
-function aggiornaMappa(filtro = "tutti") {
+function aggiornaMappa() {
   clusterEventi.clearLayers();
 
-  const eventiFiltrati = filtro === "tutti"
-    ? eventi
-    : eventi.filter(e => e.tipo === filtro);
+  const eventiFiltrati = getEventiVisibili();
 
   eventiFiltrati.forEach(evento => {
     if (!evento.lat || !evento.lng) return;
@@ -330,7 +364,47 @@ async function aggiornaStatoSalvataggi() {
   });
 }
 
+function impostaDataSelezionata(data, bottoneAttivo = null) {
+  dataSelezionata = dataLocale(data);
+  document.getElementById("filtro-data-eventi").value = dataSelezionata;
+
+  document.querySelectorAll(".date-chip").forEach(btn => btn.classList.remove("attivo"));
+  if (bottoneAttivo) bottoneAttivo.classList.add("attivo");
+
+  mostraEventi();
+  aggiornaMappa();
+  aggiornaStatoSalvataggi();
+}
+
+document.getElementById("btn-oggi").addEventListener("click", () => {
+  impostaDataSelezionata(new Date(), document.getElementById("btn-oggi"));
+});
+
+document.getElementById("btn-domani").addEventListener("click", () => {
+  impostaDataSelezionata(aggiungiGiorni(new Date(), 1), document.getElementById("btn-domani"));
+});
+
+document.getElementById("btn-dopodomani").addEventListener("click", () => {
+  impostaDataSelezionata(aggiungiGiorni(new Date(), 2), document.getElementById("btn-dopodomani"));
+});
+
+document.getElementById("filtro-data-eventi").addEventListener("change", (e) => {
+  if (!e.target.value) return;
+
+  dataSelezionata = e.target.value;
+  document.querySelectorAll(".date-chip").forEach(btn => btn.classList.remove("attivo"));
+
+  mostraEventi();
+  aggiornaMappa();
+  aggiornaStatoSalvataggi();
+});
+
+document.querySelector(".date-picker-label").addEventListener("click", () => {
+  document.getElementById("filtro-data-eventi").showPicker?.();
+});
+
 // AVVIO
+document.getElementById("filtro-data-eventi").value = dataSelezionata;
 aggiornaHeader();
 
 // GESTISCI REDIRECT DA ACCOUNT CON CITTÀ
