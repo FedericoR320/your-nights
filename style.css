@@ -468,11 +468,11 @@ nav a:hover {
 /* ACCOUNT PAGE */
 .account-page {
   display: grid;
-  grid-template-columns: 220px 1fr 280px;
-  gap: 32px;
-  max-width: 1200px;
+  grid-template-columns: 240px minmax(680px, 1fr) 300px;
+  gap: 28px;
+  max-width: 1500px;
   margin: 40px auto;
-  padding: 0 32px;
+  padding: 0 24px;
   align-items: start;
 }
 
@@ -936,4 +936,11 @@ nav {
   border-radius: 12px;
   border: 1px solid #2a2a2a;
   margin-top: 16px;
+}
+
+#saved-events-container,
+#cal-giorno-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
 }
