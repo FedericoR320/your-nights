@@ -72,20 +72,42 @@
         <div class="sidebar-link" style="border-top:1px solid #222;margin-top:8px;padding-top:12px;color:#555;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">
           Account
         </div>
-        <button class="sidebar-link attiva">
-          <i data-lucide="bookmark"></i> Serate salvate
+        <button class="sidebar-link attiva" id="btn-sidebar-salvate">
+            <i data-lucide="bookmark"></i> Serate salvate
+        </button>
+        <button class="sidebar-link" id="btn-sidebar-calendario">
+            <i data-lucide="calendar"></i> Calendario
         </button>
         <button class="sidebar-link" id="btn-logout-sidebar">
-          <i data-lucide="log-out"></i> Logout
+            <i data-lucide="log-out"></i> Logout
         </button>
       </aside>
 
       <main class="account-main">
-        <h2>Le mie serate salvate</h2>
-        <div id="saved-events-container">
-          <p class="empty-state">Non hai ancora salvato nessuna serata.<br>Esplora la mappa e salva quelle che ti interessano.</p>
+        <!-- VISTA SERATE SALVATE -->
+        <div id="vista-salvate">
+            <h2>Le mie serate salvate</h2>
+            <div id="saved-events-container">
+            <p class="empty-state">Non hai ancora salvato nessuna serata.<br>Esplora la mappa e salva quelle che ti interessano.</p>
+            </div>
         </div>
-      </main>
+
+        <!-- VISTA CALENDARIO -->
+        <div id="vista-cal-account" style="display:none">
+            <h2>Il mio calendario</h2>
+            <div class="cal-header">
+            <button id="cal-prec">&#8592;</button>
+            <h3 id="cal-titolo"></h3>
+            <button id="cal-succ">&#8594;</button>
+            </div>
+            <div id="cal-griglia-account"></div>
+            <div id="cal-eventi-giorno">
+            <h3 id="cal-giorno-titolo"></h3>
+            <div id="cal-giorno-container"></div>
+            </div>
+        </div>
+
+        </main>
 
       <aside class="account-profile">
         <div class="profile-avatar" id="profile-avatar-btn" title="Cambia foto">

@@ -274,4 +274,115 @@ if (inputCittaAccount) {
   });
 }
 
+// NAVIGAZIONE SIDEBAR ACCOUNT
+document.getElementById("btn-sidebar-salvate").addEventListener("click", () => {
+  document.getElementById("vista-salvate").style.display = "block";
+  document.getElementById("vista-cal-account").style.display = "none";
+  document.getElementById("btn-sidebar-salvate").classList.add("attiva");
+  document.getElementById("btn-sidebar-calendario").classList.remove("attiva");
+});
+
+document.getElementById("btn-sidebar-calendario").addEventListener("click", () => {
+  document.getElementById("vista-salvate").style.display = "none";
+  document.getElementById("vista-cal-account").style.display = "block";
+  document.getElementById("btn-sidebar-salvate").classList.remove("attiva");
+  document.getElementById("btn-sidebar-calendario").classList.add("attiva");
+  renderCalendarioAccount();
+});
+
+// CALENDARIO ACCOUNT
+let meseAcc = new Date().getMonth();
+let annoAcc = new Date().getFullYear();
+
+const mesiNomiAcc = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+                     "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+const giorniNomiAcc = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
+
+async function renderCalendarioAccount() {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData?.session?.user;
+  if (!user) return;
+
+  // carica eventi salvati con dettagli
+  const { data: salvati } = await supabaseClient
+    .from("eventi_salvati")
+    .select("evento_id")
+    .eq("user_id", user.id);
+
+  let eventiSalvati = [];
+  if (salvati && salvati.length > 0) {
+    const ids = salvati.map(s => s.evento_id);
+    const { data: eventi } = await supabaseClient
+      .from("Eventi")
+      .select("*")
+      .in("id", ids);
+    eventiSalvati = eventi || [];
+  }
+
+  const griglia = document.getElementById("cal-griglia-account");
+  const titolo = document.getElementById("cal-titolo");
+  titolo.textContent = `${mesiNomiAcc[meseAcc]} ${annoAcc}`;
+  griglia.innerHTML = "";
+
+  giorniNomiAcc.forEach(g => {
+    const el = document.createElement("div");
+    el.className = "cal-intestazione";
+    el.textContent = g;
+    griglia.appendChild(el);
+  });
+
+  const primoGiorno = new Date(annoAcc, meseAcc, 1).getDay();
+  const offset = primoGiorno === 0 ? 6 : primoGiorno - 1;
+  const giorniNelMese = new Date(annoAcc, meseAcc + 1, 0).getDate();
+
+  for (let i = 0; i < offset; i++) {
+    const vuoto = document.createElement("div");
+    vuoto.className = "cal-giorno vuoto";
+    griglia.appendChild(vuoto);
+  }
+
+  for (let g = 1; g <= giorniNelMese; g++) {
+    const dataStr = `${annoAcc}-${String(meseAcc + 1).padStart(2,"0")}-${String(g).padStart(2,"0")}`;
+    const eventiDelGiorno = eventiSalvati.filter(e => e.data === dataStr);
+
+    const cella = document.createElement("div");
+    cella.className = "cal-giorno" + (eventiDelGiorno.length > 0 ? " ha-eventi" : "");
+    cella.innerHTML = g + (eventiDelGiorno.length > 0 ? '<div class="punto"></div>' : "");
+
+    if (eventiDelGiorno.length > 0) {
+      cella.addEventListener("click", () => {
+        document.getElementById("cal-giorno-titolo").textContent = `${g} ${mesiNomiAcc[meseAcc]}`;
+        document.getElementById("cal-giorno-container").innerHTML = eventiDelGiorno.map(e => `
+          <div class="card" onclick="window.location.href='evento.html?id=${e.id}'" style="cursor:pointer">
+            <div class="card-img" style="background-image:url('${e.immagine || ''}')"></div>
+            <div class="card-body">
+              <div class="tipo">${e.tipo}</div>
+              <h3>${e.nome}</h3>
+              <div class="dettagli">
+                <span>📍 ${e.locale}</span>
+                <span>🕐 ${e.orario}</span>
+                <span>💶 ${e.prezzo}</span>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      });
+    }
+
+    griglia.appendChild(cella);
+  }
+}
+
+document.getElementById("cal-prec").addEventListener("click", () => {
+  meseAcc--;
+  if (meseAcc < 0) { meseAcc = 11; annoAcc--; }
+  renderCalendarioAccount();
+});
+
+document.getElementById("cal-succ").addEventListener("click", () => {
+  meseAcc++;
+  if (meseAcc > 11) { meseAcc = 0; annoAcc++; }
+  renderCalendarioAccount();
+});
+
 controllaSessione();
