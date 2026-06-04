@@ -1,0 +1,335 @@
+/* RESET & BASE */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0d0d0d;
+  color: #f0f0f0;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background-color: #111;
+  border-bottom: 1px solid #222;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e63946;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+nav a {
+  color: #ccc;
+  text-decoration: none;
+  margin-left: 24px;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: #e63946;
+}
+
+.nav-link {
+  color: #ccc;
+  text-decoration: none;
+  margin-left: 24px;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #e63946;
+}
+
+.nav-link.attiva {
+  color: #e63946;
+  border-bottom: 2px solid #e63946;
+  padding-bottom: 2px;
+}
+
+/* BARRA CERCA CITTÀ */
+.cerca-citta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  max-width: 600px;
+  margin: 0 32px;
+}
+
+#input-citta,
+#input-citta-account,
+#input-citta-locali {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  color: #f0f0f0;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+#input-citta:focus,
+#input-citta-account:focus,
+#input-citta-locali:focus {
+  border-color: #e63946;
+}
+
+#input-citta::placeholder,
+#input-citta-account::placeholder,
+#input-citta-locali::placeholder {
+  color: #555;
+}
+
+#btn-citta,
+#btn-citta-account,
+#btn-citta-locali {
+  background: #e63946;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+#btn-citta:hover,
+#btn-citta-account:hover,
+#btn-citta-locali:hover {
+  background: #c1121f;
+}
+
+/* AVATAR HEADER */
+#avatar-link {
+  text-decoration: none;
+  margin-left: 16px;
+}
+
+#avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  border: 2px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  overflow: hidden;
+}
+
+#avatar:hover {
+  border-color: #e63946;
+}
+
+#avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* NOTIFICHE */
+#btn-notifiche {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: color 0.2s;
+}
+
+#btn-notifiche:hover {
+  color: #e63946;
+}
+
+/* BOTTONI GLOBALI */
+.btn-primary {
+  background: #e63946;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #c1121f;
+}
+
+.btn-secondary {
+  background: none;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+/* CARD EVENTO — condivisa tra index/account/calendario */
+.card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #e63946;
+}
+
+.card-img {
+  width: 100%;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.card-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%);
+  border-radius: 0;
+  pointer-events: none;
+}
+
+.card-body {
+  padding: 16px 20px 20px;
+}
+
+.card .tipo {
+  font-size: 0.72rem;
+  color: #e63946;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.card h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #f0f0f0;
+}
+
+.card .dettagli {
+  font-size: 0.85rem;
+  color: #888;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card .dettagli span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.2;
+}
+
+.card .dettagli i {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: #555;
+}
+
+/* TASTO SALVA — condiviso */
+.btn-salva {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 20px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  backdrop-filter: blur(4px);
+}
+
+.btn-salva:hover {
+  background: #e63946;
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-salva.salvato {
+  background: #e63946;
+  color: white;
+}
+
+.btn-salva i {
+  width: 15px;
+  height: 15px;
+  transition: color 0.2s;
+}
+
+.salva-label {
+  display: none;
+  white-space: nowrap;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.btn-salva:hover .salva-label {
+  display: inline;
+}
+
+/* STATO VUOTO */
+.empty-state {
+  color: #555;
+  font-size: 0.9rem;
+  padding: 32px 0;
+  text-align: center;
+}
+
+#nav-saluto {
+  white-space: nowrap;
+}

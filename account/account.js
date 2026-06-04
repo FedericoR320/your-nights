@@ -279,7 +279,7 @@ function creaCardAccount(e) {
 
   return `
     <div class="card" style="position:relative">
-      <div class="card-img" style="background-image:url('${imgUrl}')" onclick="window.location.href='evento.html?id=${e.id}'">
+      <div class="card-img" style="background-image:url('${imgUrl}')" onclick="window.location.href='evento/evento.html?id=${e.id}'">
         <div class="card-img-overlay"></div>
         <button class="btn-salva salvato btn-rimuovi-salvato" data-evento-id="${e.id}" title="Rimuovi">
           <span class="salva-label">Rimuovi</span>
@@ -287,7 +287,7 @@ function creaCardAccount(e) {
         </button>
       </div>
 
-      <div class="card-body" onclick="window.location.href='evento.html?id=${e.id}'">
+      <div class="card-body" onclick="window.location.href='evento/evento.html?id=${e.id}'">
         <div class="tipo">${e.tipo || ""}</div>
         <h3>${e.nome || "Evento senza nome"}</h3>
         <div class="dettagli">
@@ -410,7 +410,7 @@ function renderMappaAccount() {
         ${evento.locale || ""}<br>
         🕐 ${evento.orario || ""}<br>
         💶 ${evento.prezzo || ""}<br>
-        <a href="evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
+        <a href="evento/evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
       `);
 
     markerAccount.push(marker);
@@ -537,7 +537,7 @@ function setupEventListeners() {
 function vaiAllaCitta() {
   const citta = el("input-citta-account").value.trim();
   if (!citta) return;
-  window.location.href = `index.html?citta=${encodeURIComponent(citta)}`;
+  window.location.href = `index/index.html?citta=${encodeURIComponent(citta)}`;
 }
 
 async function controllaSessione() {

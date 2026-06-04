@@ -61,7 +61,7 @@ function creaCard(evento) {
           <i data-lucide="bookmark"></i>
         </button>
       </div>
-      <div class="card-body" onclick="window.location.href='evento.html?id=${evento.id}'" style="cursor:pointer">
+      <div class="card-body" onclick="window.location.href='evento/evento.html?id=${evento.id}'" style="cursor:pointer">
         <div class="tipo">${evento.tipo}</div>
         <h3>${evento.nome}</h3>
         <div class="dettagli">
@@ -140,7 +140,7 @@ function aggiornaMappa() {
         ${evento.locale}<br>
         🕐 ${evento.orario}<br>
         💶 ${evento.prezzo}<br>
-        <a href="evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
+        <a href="evento/evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
       `);
 
     clusterEventi.addLayer(pin);

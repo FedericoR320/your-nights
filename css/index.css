@@ -1,0 +1,368 @@
+/* MAPPA */
+#mappa {
+  width: 100%;
+  height: 450px;
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+}
+
+/* LISTA EVENTI */
+#lista-eventi {
+  padding: 32px;
+}
+
+#lista-eventi h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+#cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* CALENDARIO INDEX */
+#vista-calendario {
+  padding: 32px;
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cal-header h2 {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #aaa;
+}
+
+.cal-header button {
+  background: none;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.cal-header button:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+#cal-griglia {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 32px;
+}
+
+.cal-giorno {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  min-height: 52px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cal-giorno.ha-eventi {
+  color: #f0f0f0;
+  border-color: #e63946;
+}
+
+.cal-giorno.ha-eventi:hover {
+  background: #e63946;
+  color: white;
+}
+
+.cal-giorno.vuoto {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.cal-giorno .punto {
+  width: 6px;
+  height: 6px;
+  background: #e63946;
+  border-radius: 50%;
+  margin: 4px auto 0;
+}
+
+.cal-intestazione {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #444;
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+
+#eventi-giorno {
+  margin-top: 16px;
+}
+
+#eventi-giorno-titolo {
+  font-size: 1rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+/* GEOLOCALIZZAZIONE */
+#btn-geolocal {
+  background: none;
+  border: 1px solid #e63946;
+  color: #e63946;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#btn-geolocal i {
+  width: 14px;
+  height: 14px;
+}
+
+#btn-geolocal:hover {
+  background: #e63946;
+  color: white;
+}
+
+/* CONTROLLI MAPPA DATA */
+.mappa-controlli {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 32px;
+  background: #111;
+  border-top: 1px solid #222;
+  flex-wrap: wrap;
+}
+
+.date-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-chip,
+.date-calendar-btn {
+  background: #1e1e1e;
+  color: #ccc;
+  border: 1px solid #333;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.date-chip:hover,
+.date-calendar-btn:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+.date-chip.attivo {
+  background: #e63946;
+  border-color: #e63946;
+  color: white;
+}
+
+.date-calendar-btn {
+  width: 38px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-calendar-btn i {
+  width: 17px;
+  height: 17px;
+}
+
+#filtro-data-eventi {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  border: none;
+  padding: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* DROPDOWN TIPO SERATA */
+.tipo-dropdown {
+  position: relative;
+  z-index: 500;
+}
+
+.tipo-dropdown-btn {
+  background: #1e1e1e;
+  color: #ccc;
+  border: 1px solid #333;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tipo-dropdown-btn:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+.tipo-dropdown-btn i {
+  width: 16px;
+  height: 16px;
+}
+
+.tipo-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 46px;
+  left: 0;
+  min-width: 190px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+}
+
+.tipo-dropdown-menu.aperto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tipo-opzione {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.tipo-opzione:hover {
+  background: #2a2a2a;
+  color: #f0f0f0;
+}
+
+.tipo-opzione.attivo {
+  background: #e63946;
+  color: white;
+}
+
+/* POPUP LOGIN */
+#popup-login {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+}
+
+#popup-box {
+  position: relative;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 40px 32px;
+  max-width: 380px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  z-index: 1;
+}
+
+#popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+#popup-close:hover {
+  color: #f0f0f0;
+}
+
+#popup-close i {
+  width: 18px;
+  height: 18px;
+}
+
+#popup-icon {
+  width: 40px;
+  height: 40px;
+  color: #e63946;
+}
+
+#popup-box h2 {
+  font-size: 1.2rem;
+  color: #f0f0f0;
+}
+
+#popup-box p {
+  font-size: 0.875rem;
+  color: #888;
+  line-height: 1.6;
+}
+
+#popup-btn-accedi,
+#popup-btn-registrati {
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+}

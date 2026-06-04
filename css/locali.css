@@ -1,0 +1,132 @@
+/* PAGINA LOCALI */
+.locali-page {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 48px 32px;
+}
+
+.locali-hero {
+  margin-bottom: 28px;
+}
+
+.locali-hero h1 {
+  font-size: 2rem;
+  color: #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.locali-hero p {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.locali-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.locale-filtro {
+  background: #1e1e1e;
+  color: #ccc;
+  border: 1px solid #333;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.locale-filtro:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+.locale-filtro.attivo {
+  background: #e63946;
+  color: white;
+  border-color: #e63946;
+}
+
+#locali-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+.locale-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.locale-card:hover {
+  transform: translateY(-4px);
+  border-color: #e63946;
+}
+
+.locale-img {
+  height: 190px;
+  background-size: cover;
+  background-position: center;
+}
+
+.locale-body {
+  padding: 18px 20px 22px;
+}
+
+.locale-body .tipo {
+  font-size: 0.72rem;
+  color: #e63946;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.locale-body h3 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.locale-indirizzo {
+  color: #888;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.locale-indirizzo i {
+  width: 14px;
+  height: 14px;
+}
+
+.locale-descrizione {
+  color: #777;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.locale-social {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.locale-social a {
+  color: #e63946;
+  border: 1px solid #333;
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.locale-social a:hover {
+  border-color: #e63946;
+}
