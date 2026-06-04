@@ -18,6 +18,14 @@ const CITY_HERO_IMAGES = {
 
 const CITY_HERO_DEFAULT = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1800&q=80";
 
+const SEARCH_PLACEHOLDERS = [
+  "Cerca citta...",
+  "Cerca eventi...",
+  "Cerca locali...",
+  "Cerca DJ set...",
+  "Cerca live music..."
+];
+
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();
   if (!valore) return "Torino";
@@ -323,9 +331,65 @@ document.querySelectorAll(".nav-link[data-vista]").forEach(link => {
 });
 
 
+
+function mostraVistaMappa() {
+  document.getElementById("vista-mappa").style.display = "block";
+  document.getElementById("vista-calendario").style.display = "none";
+  document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("attiva"));
+  const navMappa = document.querySelector("[data-vista='mappa']");
+  if (navMappa) navMappa.classList.add("attiva");
+  setTimeout(() => mappa.invalidateSize(), 100);
+}
+
+function estraiCittaDaIndirizzo(address = {}) {
+  return address.city || address.town || address.village || address.municipality || address.county || address.state_district || "";
+}
+
+async function aggiornaCittaDaCoordinate(lat, lng) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&addressdetails=1`);
+    const dati = await res.json();
+    const cittaRilevata = estraiCittaDaIndirizzo(dati.address);
+
+    if (cittaRilevata) {
+      await caricaEventi(normalizzaCitta(cittaRilevata));
+    }
+  } catch (error) {
+    console.warn("Citta non rilevata dalla posizione", error);
+  }
+}
+
+function avviaPlaceholderDinamico() {
+  const inputs = [
+    document.getElementById("input-citta"),
+    document.getElementById("input-citta-modal")
+  ].filter(Boolean);
+
+  if (inputs.length === 0) return;
+
+  let indice = 0;
+  const aggiornaPlaceholder = () => {
+    inputs.forEach(input => {
+      if (document.activeElement !== input) {
+        input.placeholder = SEARCH_PLACEHOLDERS[indice];
+      }
+    });
+    indice = (indice + 1) % SEARCH_PLACEHOLDERS.length;
+  };
+
+  aggiornaPlaceholder();
+  setInterval(aggiornaPlaceholder, 2200);
+}
 function cambiaCitta(citta) {
-  const cittaNormalizzata = normalizzaCitta(citta);
-  if (!cittaNormalizzata) return;
+  const valore = (citta || "").trim();
+  if (!valore) return;
+
+  const cittaNormalizzata = normalizzaCitta(valore);
+
+  chiudiCityModal();
+  mostraVistaMappa();
+  impostaCittaCorrente(cittaNormalizzata);
+  caricaEventi(cittaNormalizzata);
 
   fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cittaNormalizzata)}&format=json&limit=1`)
     .then(res => res.json())
@@ -334,22 +398,10 @@ function cambiaCitta(citta) {
         const lat = parseFloat(dati[0].lat);
         const lng = parseFloat(dati[0].lon);
         mappa.setView([lat, lng], 13);
+        setTimeout(() => mappa.invalidateSize(), 100);
       }
-
-      document.getElementById("vista-mappa").style.display = "block";
-      document.getElementById("vista-calendario").style.display = "none";
-      document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("attiva"));
-      const navMappa = document.querySelector("[data-vista='mappa']");
-      if (navMappa) navMappa.classList.add("attiva");
-      setTimeout(() => mappa.invalidateSize(), 100);
-
-      chiudiCityModal();
-      caricaEventi(cittaNormalizzata);
     })
-    .catch(() => {
-      chiudiCityModal();
-      caricaEventi(cittaNormalizzata);
-    });
+    .catch(() => {});
 }
 // CERCA CITTA
 document.getElementById("btn-citta").addEventListener("click", cercaCitta);
@@ -391,6 +443,7 @@ document.getElementById("btn-geolocal").addEventListener("click", () => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       mappa.setView([lat, lng], 14);
+      mostraVistaMappa();
       L.marker([lat, lng], {
         icon: L.divIcon({
           className: '',
@@ -399,6 +452,7 @@ document.getElementById("btn-geolocal").addEventListener("click", () => {
           iconAnchor: [7, 7]
         })
       }).addTo(mappa).bindPopup("Tu sei qui").openPopup();
+      aggiornaCittaDaCoordinate(lat, lng);
     },
     () => { alert("Impossibile ottenere la posizione. Controlla i permessi del browser."); }
   );
@@ -549,6 +603,7 @@ if (btnCalendarioData && inputDataEventi) {
 // AVVIO
 document.getElementById("filtro-data-eventi").value = dataSelezionata;
 impostaCittaCorrente(cittaCorrente, false);
+avviaPlaceholderDinamico();
 aggiornaHeader();
 
 // GESTISCI REDIRECT DA ACCOUNT CON CITTA

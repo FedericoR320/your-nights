@@ -1,9 +1,13 @@
 /* MAPPA */
 #mappa {
-  width: 100%;
-  height: 450px;
-  border-top: 1px solid #222;
-  border-bottom: 1px solid #222;
+  width: auto;
+  height: 460px;
+  margin: 0 32px 32px;
+  border: 1px solid #2a2a2a;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+  background: #1a1a1a;
 }
 
 /* LISTA EVENTI */
@@ -584,6 +588,11 @@
 }
 
 @media (max-width: 760px) {
+  #mappa {
+    height: 420px;
+    margin: 0 16px 24px;
+    border-radius: 18px;
+  }
   .city-hero,
   .city-hero-content {
     min-height: 230px;
