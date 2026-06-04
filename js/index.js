@@ -8,12 +8,13 @@ let dataSelezionata = dataLocale(new Date());
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const CITY_HERO_IMAGES = {
-  Torino: "https://images.unsplash.com/photo-1599658880436-c61792e70672?auto=format&fit=crop&w=1800&q=80",
+  Torino: "https://images.unsplash.com/photo-1610651219730-6b580d616e72?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   Milano: "https://images.unsplash.com/photo-1513581166391-887a96ddeafd?auto=format&fit=crop&w=1800&q=80",
   Roma: "https://images.unsplash.com/photo-1529260830199-42c24126f198?auto=format&fit=crop&w=1800&q=80",
   Bologna: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=1800&q=80",
   Firenze: "https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1800&q=80",
-  Napoli: "https://images.unsplash.com/photo-1576502200916-3808e07386a5?auto=format&fit=crop&w=1800&q=80"
+  Napoli: "https://images.unsplash.com/photo-1576502200916-3808e07386a5?auto=format&fit=crop&w=1800&q=80",
+  Aosta: "https://images.unsplash.com/photo-1653151252091-318a02175fff?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 };
 
 const CITY_HERO_DEFAULT = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1800&q=80";
