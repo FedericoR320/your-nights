@@ -39,7 +39,7 @@ const CITY_HERO_IMAGES = {
   Taormina: "https://images.unsplash.com/photo-1751675706145-b0e36efb12fb?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=quincy-john-ndem-lRhE6cd4c70-unsplash.jpg&w=1800"
 };
 
-const CITY_HERO_DEFAULT = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1800&q=80";
+const CITY_HERO_DEFAULT = "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1800&q=80";
 
 const SEARCH_PLACEHOLDERS = [
   "Cerca citta...",
@@ -103,10 +103,7 @@ function impostaCittaCorrente(citta, aggiornaUrl = true) {
 }
 
 function getHeroImageCitta() {
-  if (CITY_HERO_IMAGES[cittaCorrente]) return CITY_HERO_IMAGES[cittaCorrente];
-
-  const query = encodeURIComponent(`${cittaCorrente} city skyline night`);
-  return `https://source.unsplash.com/1800x900/?${query}`;
+  return CITY_HERO_IMAGES[cittaCorrente] || CITY_HERO_DEFAULT;
 }
 function aggiornaHeroCitta() {
   const heroCitta = document.getElementById("hero-citta");
