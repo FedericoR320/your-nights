@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Locali | Your Nights</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Your Nights</a>
+
+    <div class="cerca-citta" id="barra-ricerca-locali">
+      <input type="text" id="input-citta-locali" placeholder="Cerca città..." />
+      <button id="btn-citta-locali">Vai</button>
+    </div>
+
+    <nav>
+      <a href="index.html" class="nav-link">Mappa</a>
+      <a href="locali.html" class="nav-link attiva">Locali</a>
+      <a href="account.html" id="nav-accedi" class="nav-link">Account</a>
+    </nav>
+  </header>
+
+  <main class="locali-page">
+
+    <section class="locali-hero">
+      <h1>Locali</h1>
+      <p>Scopri i locali della città, guarda le vibe e trova le prossime serate.</p>
+    </section>
+
+    <section class="locali-toolbar">
+      <button class="locale-filtro attivo" data-categoria="tutti">Tutti</button>
+      <button class="locale-filtro" data-categoria="club">Club</button>
+      <button class="locale-filtro" data-categoria="pub">Pub</button>
+      <button class="locale-filtro" data-categoria="live">Live Music</button>
+      <button class="locale-filtro" data-categoria="cocktail">Cocktail Bar</button>
+    </section>
+
+    <section id="lista-locali">
+      <div id="locali-container"></div>
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="locali.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>
