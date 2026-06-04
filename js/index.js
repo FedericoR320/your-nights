@@ -172,7 +172,7 @@ function getWeekendRange() {
 
 function eventoGratis(evento) {
   const prezzo = String(evento.prezzo || "").toLowerCase().trim();
-  return prezzo === "0" || prezzo === "0 euro" || prezzo === "€0" || prezzo === "0€" || prezzo.includes("gratis") || prezzo.includes("free");
+  return prezzo === "0" || prezzo === "0 euro" || prezzo.includes("gratis") || prezzo.includes("free");
 }
 
 function testoEvento(evento) {
@@ -246,30 +246,66 @@ async function caricaEventi(citta = cittaCorrente) {
   await aggiornaStatoSalvataggi();
 }
 
+function prezzoEventoLabel(evento) {
+  const prezzo = String(evento.prezzo || "").trim();
+  return prezzo || "Info prezzo";
+}
+
+function dataEventoLabel(data) {
+  if (!data) return "Data da confermare";
+  const parsed = new Date(`${data}T00:00:00`);
+  if (Number.isNaN(parsed.getTime())) return data;
+  return parsed.toLocaleDateString("it-IT", { weekday: "short", day: "numeric", month: "short" });
+}
+
+function tipoEventoLabel(tipo) {
+  if (!tipo) return "Serata";
+  const labels = {
+    dj: "DJ set",
+    live: "Live music",
+    jazz: "Jazz",
+    karaoke: "Karaoke",
+    sport: "Sport"
+  };
+  return labels[tipo] || tipo;
+}
 // CARD
 function creaCard(evento) {
   const loggato = !!localStorage.getItem("yn_token");
-  const imgUrl = evento.immagine || "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800";
+  const imgUrl = evento.immagine || "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=900&q=80";
+  const dettaglioUrl = urlEvento(evento.id);
+  const prezzo = prezzoEventoLabel(evento);
+  const gratis = eventoGratis(evento);
 
   return `
-    <div class="card" data-tipo="${evento.tipo}">
-      <div class="card-img" style="background-image:url('${imgUrl}')" onclick="window.location.href='${urlEvento(evento.id)}'">
+    <article class="card event-card" data-tipo="${evento.tipo}" onclick="window.location.href='${dettaglioUrl}'">
+      <div class="card-img" style="background-image:url('${imgUrl}')">
         <div class="card-img-overlay"></div>
+        <div class="event-card-badges">
+          <span class="event-badge event-badge-type">${tipoEventoLabel(evento.tipo)}</span>
+          ${gratis ? `<span class="event-badge event-badge-free">Gratis</span>` : ""}
+        </div>
         <button class="btn-salva" onclick="event.stopPropagation(); ${loggato ? `salvaEvento(${evento.id}, this)` : `apriPopupLogin()`}" title="Salva">
           <span class="salva-label">Salva</span>
           <i data-lucide="bookmark"></i>
         </button>
       </div>
-      <div class="card-body" onclick="window.location.href='${urlEvento(evento.id)}'" style="cursor:pointer">
-        <div class="tipo">${evento.tipo}</div>
-        <h3>${evento.nome}</h3>
-        <div class="dettagli">
-          <span><i data-lucide="map-pin"></i> ${evento.locale}</span><br>
-          <span><i data-lucide="clock"></i> ${evento.orario}</span><br>
-          <span><i data-lucide="euro"></i> ${evento.prezzo}</span>
+      <div class="card-body">
+        <div class="event-card-kicker">${dataEventoLabel(evento.data)} · ${evento.orario || "Orario da confermare"}</div>
+        <div class="event-card-title-row">
+          <h3>${evento.nome || "Serata senza nome"}</h3>
+          <span class="event-card-price">${prezzo}</span>
+        </div>
+        <div class="event-card-meta">
+          <span><i data-lucide="map-pin"></i> ${evento.locale || evento.citta || "Locale da confermare"}</span>
+          <span><i data-lucide="building-2"></i> ${evento.citta || cittaCorrente}</span>
+        </div>
+        <div class="event-card-footer">
+          <span>Vedi serata</span>
+          <i data-lucide="arrow-right"></i>
         </div>
       </div>
-    </div>
+    </article>
   `;
 }
 // MOSTRA EVENTI

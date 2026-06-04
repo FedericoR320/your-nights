@@ -1,3 +1,269 @@
 /* EVENTO PAGE */
-/* Al momento nel CSS condiviso non ci sono blocchi chiaramente dedicati a evento.html.
-   Quando rifinirai la pagina evento, metti qui i suoi stili specifici. */
+#dettaglio-container {
+  width: 100%;
+}
+
+#dettaglio-evento {
+  min-height: calc(100vh - 72px);
+}
+
+.evento-error {
+  color: #e63946;
+  padding: 48px 32px;
+}
+
+.evento-hero {
+  position: relative;
+  min-height: 430px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border-bottom: 1px solid #222;
+}
+
+.evento-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(13,13,13,0.94) 0%, rgba(13,13,13,0.66) 46%, rgba(13,13,13,0.25) 100%),
+    linear-gradient(0deg, rgba(13,13,13,0.9) 0%, rgba(13,13,13,0.12) 68%);
+}
+
+.evento-hero-content {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 42px 32px 46px;
+}
+
+.evento-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ddd;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.35);
+  border-radius: 999px;
+  padding: 8px 12px;
+  margin-bottom: 28px;
+  backdrop-filter: blur(5px);
+}
+
+.evento-back:hover {
+  color: white;
+  border-color: #e63946;
+}
+
+.evento-back i {
+  width: 16px;
+  height: 16px;
+}
+
+.evento-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.evento-badges span {
+  background: #e63946;
+  color: white;
+  border-radius: 999px;
+  padding: 6px 11px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.evento-hero h1 {
+  max-width: 820px;
+  color: #fff;
+  font-size: clamp(2.4rem, 6vw, 5.8rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+  margin-bottom: 14px;
+}
+
+.evento-hero p {
+  color: #ddd;
+  font-size: 1.08rem;
+  margin-bottom: 24px;
+}
+
+.evento-hero-facts {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.evento-hero-facts div {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #f5f5f5;
+  background: rgba(20,20,20,0.72);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  padding: 9px 13px;
+  backdrop-filter: blur(5px);
+  font-size: 0.9rem;
+}
+
+.evento-hero-facts i {
+  width: 17px;
+  height: 17px;
+  color: #ffb3b9;
+}
+
+.evento-layout {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 36px 32px 56px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+.evento-main,
+.evento-sidebar {
+  display: grid;
+  gap: 18px;
+}
+
+.evento-section,
+.evento-info-card,
+.evento-actions {
+  background: #171717;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.evento-section h2,
+.evento-info-card h2 {
+  color: #fff;
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+}
+
+.evento-section p {
+  color: #b8b8b8;
+  line-height: 1.75;
+  font-size: 0.98rem;
+}
+
+.evento-place-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.evento-place-card div {
+  display: grid;
+  gap: 5px;
+}
+
+.evento-place-card strong {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.evento-place-card span {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.evento-place-card a {
+  color: #e63946;
+  text-decoration: none;
+  border: 1px solid #333;
+  border-radius: 999px;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
+.evento-info-row {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  color: #cfcfcf;
+  padding: 12px 0;
+  border-bottom: 1px solid #262626;
+  line-height: 1.35;
+}
+
+.evento-info-row:last-child {
+  border-bottom: none;
+}
+
+.evento-info-row i {
+  width: 18px;
+  height: 18px;
+  color: #e63946;
+}
+
+.evento-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.evento-action-primary,
+.evento-action-secondary {
+  min-height: 44px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.evento-action-primary {
+  background: #e63946;
+  color: white;
+  border: 1px solid #e63946;
+}
+
+.evento-action-secondary {
+  background: #202020;
+  color: #f0f0f0;
+  border: 1px solid #333;
+}
+
+.evento-action-primary:hover {
+  background: #c1121f;
+}
+
+.evento-action-secondary:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+@media (max-width: 860px) {
+  .evento-hero {
+    min-height: 380px;
+  }
+
+  .evento-hero-content {
+    padding: 32px 20px 34px;
+  }
+
+  .evento-layout {
+    grid-template-columns: 1fr;
+    padding: 24px 20px 42px;
+  }
+
+  .evento-place-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
