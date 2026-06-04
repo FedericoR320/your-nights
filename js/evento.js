@@ -5,6 +5,13 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // LEGGI ID DALL'URL
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
+const cittaCorrente = params.get("citta") || localStorage.getItem("yn_citta") || "Torino";
+localStorage.setItem("yn_citta", cittaCorrente);
+
+const linkMappa = document.querySelector("header nav a");
+if (linkMappa) {
+  linkMappa.href = `index.html?citta=${encodeURIComponent(cittaCorrente)}`;
+}
 
 async function caricaDettaglio() {
   if (!id) {

@@ -1,19 +1,64 @@
 const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
-const SUPABASE_KEY = "LA_TUA_ANON_KEY";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let locali = [];
-let cittaCorrente = "Torino";
+let cittaCorrente = getCittaIniziale();
 let categoriaCorrente = "tutti";
 
-async function caricaLocali(citta = "Torino") {
-  cittaCorrente = citta;
+function normalizzaCitta(citta) {
+  const valore = (citta || "").trim();
+  if (!valore) return "Torino";
+  return valore.charAt(0).toUpperCase() + valore.slice(1).toLowerCase();
+}
+
+function getCittaIniziale() {
+  const params = new URLSearchParams(window.location.search);
+  return normalizzaCitta(params.get("citta") || localStorage.getItem("yn_citta") || "Torino");
+}
+
+function urlConCitta(pagina, extraParams = {}) {
+  const params = new URLSearchParams({ citta: cittaCorrente, ...extraParams });
+  return `${pagina}?${params.toString()}`;
+}
+
+function aggiornaLinkCitta() {
+  document.querySelectorAll('a[href^="index.html"]').forEach(link => {
+    link.href = urlConCitta("index.html");
+  });
+
+  document.querySelectorAll('a[href^="account.html"]').forEach(link => {
+    link.href = urlConCitta("account.html");
+  });
+}
+
+function impostaCittaCorrente(citta, aggiornaUrl = true) {
+  cittaCorrente = normalizzaCitta(citta);
+  localStorage.setItem("yn_citta", cittaCorrente);
+
+  const inputCitta = document.getElementById("input-citta-locali");
+  if (inputCitta) inputCitta.value = cittaCorrente;
+
+  const heroTesto = document.querySelector(".locali-hero p");
+  if (heroTesto) heroTesto.textContent = `Scopri i locali di ${cittaCorrente}, guarda le vibe e trova le prossime serate.`;
+
+  if (aggiornaUrl) {
+    const params = new URLSearchParams(window.location.search);
+    params.set("citta", cittaCorrente);
+    history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+  }
+
+  aggiornaLinkCitta();
+}
+
+async function caricaLocali(citta = cittaCorrente) {
+  impostaCittaCorrente(citta);
 
   const { data, error } = await supabaseClient
     .from("locali")
     .select("*")
-    .eq("citta", citta)
+    .eq("citta", cittaCorrente)
     .order("nome", { ascending: true });
 
   if (error) {
@@ -37,7 +82,7 @@ function mostraLocali() {
 
   if (localiFiltrati.length === 0) {
     container.innerHTML = `
-      <p class="empty-state">Nessun locale trovato per questa città.</p>
+      <p class="empty-state">Nessun locale trovato per questa città .</p>
     `;
     return;
   }
@@ -96,8 +141,8 @@ function cercaCittaLocali() {
   const citta = document.getElementById("input-citta-locali").value.trim();
   if (!citta) return;
 
-  const cittaFormattata = citta.charAt(0).toUpperCase() + citta.slice(1).toLowerCase();
-  caricaLocali(cittaFormattata);
+  caricaLocali(normalizzaCitta(citta));
 }
 
-caricaLocali("Torino");
+impostaCittaCorrente(cittaCorrente, false);
+caricaLocali(cittaCorrente);

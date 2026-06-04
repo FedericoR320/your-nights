@@ -2,10 +2,57 @@ const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
 let eventi = [];
+let cittaCorrente = getCittaIniziale();
 let filtroTipoCorrente = "tutti";
 let dataSelezionata = dataLocale(new Date());
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function normalizzaCitta(citta) {
+  const valore = (citta || "").trim();
+  if (!valore) return "Torino";
+  return valore.charAt(0).toUpperCase() + valore.slice(1).toLowerCase();
+}
+
+function getCittaIniziale() {
+  const params = new URLSearchParams(window.location.search);
+  return normalizzaCitta(params.get("citta") || localStorage.getItem("yn_citta") || "Torino");
+}
+
+function urlConCitta(pagina, extraParams = {}) {
+  const params = new URLSearchParams({ citta: cittaCorrente, ...extraParams });
+  return `${pagina}?${params.toString()}`;
+}
+
+function urlEvento(eventoId) {
+  return urlConCitta("evento.html", { id: eventoId });
+}
+
+function aggiornaLinkCitta() {
+  document.querySelectorAll('a[href^="locali.html"]').forEach(link => {
+    link.href = urlConCitta("locali.html");
+  });
+
+  document.querySelectorAll('a[href^="account.html"]').forEach(link => {
+    link.href = urlConCitta("account.html");
+  });
+}
+
+function impostaCittaCorrente(citta, aggiornaUrl = true) {
+  cittaCorrente = normalizzaCitta(citta);
+  localStorage.setItem("yn_citta", cittaCorrente);
+
+  const inputCitta = document.getElementById("input-citta");
+  if (inputCitta) inputCitta.value = cittaCorrente;
+
+  if (aggiornaUrl) {
+    const params = new URLSearchParams(window.location.search);
+    params.set("citta", cittaCorrente);
+    history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+  }
+
+  aggiornaLinkCitta();
+}
 
 function dataLocale(data) {
   const anno = data.getFullYear();
@@ -29,8 +76,9 @@ function getEventiVisibili() {
 }
 
 // CARICA EVENTI DA SUPABASE
-async function caricaEventi(citta = "Torino") {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/Eventi?citta=eq.${encodeURIComponent(citta)}&select=*`, {
+async function caricaEventi(citta = cittaCorrente) {
+  impostaCittaCorrente(citta);
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/Eventi?citta=eq.${encodeURIComponent(cittaCorrente)}&select=*`, {
     headers: {
       "apikey": SUPABASE_KEY,
       "Authorization": `Bearer ${SUPABASE_KEY}`
@@ -42,7 +90,7 @@ async function caricaEventi(citta = "Torino") {
   mostraEventi();
   aggiornaMappa();
 
-  document.querySelector("#lista-eventi h2").textContent = `Eventi a ${citta}`;
+  document.querySelector("#lista-eventi h2").textContent = `Stasera a ${cittaCorrente}`;
 
   await aggiornaStatoSalvataggi();
 }
@@ -54,14 +102,14 @@ function creaCard(evento) {
 
   return `
     <div class="card" data-tipo="${evento.tipo}">
-      <div class="card-img" style="background-image:url('${imgUrl}')" onclick="window.location.href='evento.html?id=${evento.id}'">
+      <div class="card-img" style="background-image:url('${imgUrl}')" onclick="window.location.href='${urlEvento(evento.id)}'">
         <div class="card-img-overlay"></div>
         <button class="btn-salva" onclick="event.stopPropagation(); ${loggato ? `salvaEvento(${evento.id}, this)` : `apriPopupLogin()`}" title="Salva">
           <span class="salva-label">Salva</span>
           <i data-lucide="bookmark"></i>
         </button>
       </div>
-      <div class="card-body" onclick="window.location.href='evento/evento.html?id=${evento.id}'" style="cursor:pointer">
+      <div class="card-body" onclick="window.location.href='${urlEvento(evento.id)}'" style="cursor:pointer">
         <div class="tipo">${evento.tipo}</div>
         <h3>${evento.nome}</h3>
         <div class="dettagli">
@@ -138,9 +186,9 @@ function aggiornaMappa() {
       .bindPopup(`
         <strong>${evento.nome}</strong><br>
         ${evento.locale}<br>
-        🕐 ${evento.orario}<br>
-        💶 ${evento.prezzo}<br>
-        <a href="evento/evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
+        ðŸ• ${evento.orario}<br>
+        ðŸ’¶ ${evento.prezzo}<br>
+        <a href="${urlEvento(evento.id)}" style="color:#e63946;">Vedi dettagli →</a>
       `);
 
     clusterEventi.addLayer(pin);
@@ -226,7 +274,7 @@ document.querySelectorAll(".nav-link[data-vista]").forEach(link => {
   });
 });
 
-// CERCA CITTÀ
+// CERCA CITTÀ€
 document.getElementById("btn-citta").addEventListener("click", cercaCitta);
 document.getElementById("input-citta").addEventListener("keydown", (e) => {
   if (e.key === "Enter") cercaCitta();
@@ -239,7 +287,7 @@ function cercaCitta() {
   fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(citta)}&format=json&limit=1`)
     .then(res => res.json())
     .then(dati => {
-      if (dati.length === 0) { alert("Città non trovata, riprova."); return; }
+      if (dati.length === 0) { alert("CittÃ  non trovata, riprova."); return; }
       const lat = parseFloat(dati[0].lat);
       const lng = parseFloat(dati[0].lon);
       mappa.setView([lat, lng], 13);
@@ -247,10 +295,11 @@ function cercaCitta() {
       document.getElementById("vista-mappa").style.display = "block";
       document.getElementById("vista-calendario").style.display = "none";
       document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("attiva"));
-      document.querySelector("[data-vista='mappa']").classList.add("attiva");
+      const navMappa = document.querySelector("[data-vista='mappa']");
+      if (navMappa) navMappa.classList.add("attiva");
       setTimeout(() => mappa.invalidateSize(), 100);
 
-      caricaEventi(citta.charAt(0).toUpperCase() + citta.slice(1).toLowerCase());
+      caricaEventi(normalizzaCitta(citta));
     });
 }
 
@@ -309,7 +358,7 @@ async function aggiornaHeader() {
         navAccedi.style.display = "inline";
         btnNotifiche.style.display = "none";
         avatarLink.style.display = "none";
-        barraRicerca.style.display = "flex"; // ← cambia da "none" a "flex"
+        barraRicerca.style.display = "flex"; // â† cambia da "none" a "flex"
   if (navCalendario) navCalendario.style.display = "none";
 }
   lucide.createIcons();
@@ -420,19 +469,15 @@ if (btnCalendarioData && inputDataEventi) {
 
 // AVVIO
 document.getElementById("filtro-data-eventi").value = dataSelezionata;
+impostaCittaCorrente(cittaCorrente, false);
 aggiornaHeader();
 
-// GESTISCI REDIRECT DA ACCOUNT CON CITTÀ
+// GESTISCI REDIRECT DA ACCOUNT CON CITTÃ€
 const urlParams = new URLSearchParams(window.location.search);
 const cittaParam = urlParams.get("citta");
 const vistaParam = urlParams.get("vista");
 
-if (cittaParam) {
-  document.getElementById("input-citta").value = cittaParam;
-  caricaEventi(cittaParam.charAt(0).toUpperCase() + cittaParam.slice(1).toLowerCase());
-} else {
-  caricaEventi("Torino");
-}
+caricaEventi(cittaParam ? normalizzaCitta(cittaParam) : cittaCorrente);
 
 // APRI DIRETTAMENTE IL CALENDARIO SE RICHIESTO
 if (vistaParam === "calendario") {
@@ -440,3 +485,4 @@ if (vistaParam === "calendario") {
   document.getElementById("vista-calendario").style.display = "block";
   renderCalendario(meseCorrente, annoCorrente);
 }
+

@@ -5,6 +5,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let utenteCorrente = null;
 let eventiSalvatiCache = [];
+let cittaCorrente = getCittaIniziale();
 
 let meseAcc = new Date().getMonth();
 let annoAcc = new Date().getFullYear();
@@ -18,6 +19,51 @@ const mesiNomiAcc = [
 ];
 
 const giorniNomiAcc = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+
+function normalizzaCitta(citta) {
+  const valore = (citta || "").trim();
+  if (!valore) return "Torino";
+  return valore.charAt(0).toUpperCase() + valore.slice(1).toLowerCase();
+}
+
+function getCittaIniziale() {
+  const params = new URLSearchParams(window.location.search);
+  return normalizzaCitta(params.get("citta") || localStorage.getItem("yn_citta") || "Torino");
+}
+
+function urlConCitta(pagina, extraParams = {}) {
+  const params = new URLSearchParams({ citta: cittaCorrente, ...extraParams });
+  return `${pagina}?${params.toString()}`;
+}
+
+function urlEvento(eventoId) {
+  return urlConCitta("evento.html", { id: eventoId });
+}
+
+function aggiornaLinkCitta() {
+  const linkMappa = el("nav-mappa-account");
+  if (linkMappa) linkMappa.href = urlConCitta("index.html");
+
+  document.querySelectorAll('a[href^="account.html"]').forEach(link => {
+    link.href = urlConCitta("account.html");
+  });
+}
+
+function impostaCittaCorrente(citta, aggiornaUrl = true) {
+  cittaCorrente = normalizzaCitta(citta);
+  localStorage.setItem("yn_citta", cittaCorrente);
+
+  const inputCitta = el("input-citta-account");
+  if (inputCitta) inputCitta.value = cittaCorrente;
+
+  if (aggiornaUrl) {
+    const params = new URLSearchParams(window.location.search);
+    params.set("citta", cittaCorrente);
+    history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+  }
+
+  aggiornaLinkCitta();
+}
 
 function el(id) {
   return document.getElementById(id);
@@ -279,7 +325,7 @@ function creaCardAccount(e) {
 
   return `
     <div class="card" style="position:relative">
-      <div class="card-img" style="background-image:url('${imgUrl}')" onclick="window.location.href='evento/evento.html?id=${e.id}'">
+      <div class="card-img" style="background-image:url('${imgUrl}')" onclick="window.location.href='${urlEvento(e.id)}'">
         <div class="card-img-overlay"></div>
         <button class="btn-salva salvato btn-rimuovi-salvato" data-evento-id="${e.id}" title="Rimuovi">
           <span class="salva-label">Rimuovi</span>
@@ -287,7 +333,7 @@ function creaCardAccount(e) {
         </button>
       </div>
 
-      <div class="card-body" onclick="window.location.href='evento/evento.html?id=${e.id}'">
+      <div class="card-body" onclick="window.location.href='${urlEvento(e.id)}'">
         <div class="tipo">${e.tipo || ""}</div>
         <h3>${e.nome || "Evento senza nome"}</h3>
         <div class="dettagli">
@@ -408,9 +454,9 @@ function renderMappaAccount() {
       .bindPopup(`
         <strong>${evento.nome}</strong><br>
         ${evento.locale || ""}<br>
-        🕐 ${evento.orario || ""}<br>
-        💶 ${evento.prezzo || ""}<br>
-        <a href="evento/evento.html?id=${evento.id}" style="color:#e63946;">Vedi dettagli →</a>
+        ðŸ• ${evento.orario || ""}<br>
+        ðŸ’¶ ${evento.prezzo || ""}<br>
+        <a href="${urlEvento(evento.id)}" style="color:#e63946;">Vedi dettagli →</a>
       `);
 
     markerAccount.push(marker);
@@ -537,7 +583,8 @@ function setupEventListeners() {
 function vaiAllaCitta() {
   const citta = el("input-citta-account").value.trim();
   if (!citta) return;
-  window.location.href = `index/index.html?citta=${encodeURIComponent(citta)}`;
+  impostaCittaCorrente(citta, false);
+  window.location.href = urlConCitta("index.html");
 }
 
 async function controllaSessione() {
@@ -554,5 +601,7 @@ async function controllaSessione() {
   }
 }
 
+impostaCittaCorrente(cittaCorrente, false);
 setupEventListeners();
 controllaSessione();
+
