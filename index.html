@@ -36,7 +36,18 @@
       <a href="account.html" id="nav-accedi" class="nav-link">Accedi</a>
     </nav>
   </header>
-
+  <section class="city-hero" id="city-hero">
+    <div class="city-hero-bg" id="city-hero-bg"></div>
+    <div class="city-hero-overlay"></div>
+    <div class="city-hero-content">
+      <span class="city-eyebrow">Your Nights in</span>
+      <button class="city-title-btn" id="btn-cambia-citta" type="button">
+        <span id="hero-citta">Torino</span>
+        <i data-lucide="chevron-down"></i>
+      </button>
+      <p id="hero-city-copy">Eventi, locali e serate da scoprire stasera.</p>
+    </div>
+  </section>
   <div id="vista-mappa">
     <div class="mappa-controlli">
     <div class="tipo-dropdown">
@@ -102,6 +113,31 @@
     </section>
   </div>
 
+  <div id="city-modal" class="city-modal" style="display:none">
+    <div class="city-modal-overlay" id="city-modal-overlay"></div>
+    <div class="city-modal-panel">
+      <button class="city-modal-close" id="city-modal-close" type="button" aria-label="Chiudi selezione citta">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="city-modal-header">
+        <span class="city-eyebrow">Scegli la citta</span>
+        <h2>Dove usciamo stasera?</h2>
+      </div>
+      <div class="city-modal-search">
+        <i data-lucide="search"></i>
+        <input type="text" id="input-citta-modal" placeholder="Cerca citta" />
+        <button id="btn-citta-modal" type="button">Vai</button>
+      </div>
+      <div class="city-suggestions">
+        <button class="city-suggestion" data-citta="Torino" type="button">Torino</button>
+        <button class="city-suggestion" data-citta="Milano" type="button">Milano</button>
+        <button class="city-suggestion" data-citta="Roma" type="button">Roma</button>
+        <button class="city-suggestion" data-citta="Bologna" type="button">Bologna</button>
+        <button class="city-suggestion" data-citta="Firenze" type="button">Firenze</button>
+        <button class="city-suggestion" data-citta="Napoli" type="button">Napoli</button>
+      </div>
+    </div>
+  </div>
   <!-- POPUP LOGIN -->
 <div id="popup-login" style="display:none">
   <div id="popup-overlay" onclick="chiudiPopupLogin()"></div>

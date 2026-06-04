@@ -7,6 +7,16 @@ let filtroTipoCorrente = "tutti";
 let dataSelezionata = dataLocale(new Date());
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const CITY_HERO_IMAGES = {
+  Torino: "https://images.unsplash.com/photo-1599658880436-c61792e70672?auto=format&fit=crop&w=1800&q=80",
+  Milano: "https://images.unsplash.com/photo-1513581166391-887a96ddeafd?auto=format&fit=crop&w=1800&q=80",
+  Roma: "https://images.unsplash.com/photo-1529260830199-42c24126f198?auto=format&fit=crop&w=1800&q=80",
+  Bologna: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=1800&q=80",
+  Firenze: "https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?auto=format&fit=crop&w=1800&q=80",
+  Napoli: "https://images.unsplash.com/photo-1576502200916-3808e07386a5?auto=format&fit=crop&w=1800&q=80"
+};
+
+const CITY_HERO_DEFAULT = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1800&q=80";
 
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();
@@ -34,7 +44,9 @@ function aggiornaLinkCitta() {
   });
 
   document.querySelectorAll('a[href^="account.html"]').forEach(link => {
-    link.href = urlConCitta("account.html");
+    const href = link.getAttribute("href") || "";
+    const hash = href.includes("#") ? `#${href.split("#")[1]}` : "";
+    link.href = `${urlConCitta("account.html")}${hash}`;
   });
 }
 
@@ -54,6 +66,42 @@ function impostaCittaCorrente(citta, aggiornaUrl = true) {
   aggiornaLinkCitta();
 }
 
+
+function aggiornaHeroCitta() {
+  const heroCitta = document.getElementById("hero-citta");
+  const heroBg = document.getElementById("city-hero-bg");
+  const heroCopy = document.getElementById("hero-city-copy");
+
+  if (heroCitta) heroCitta.textContent = cittaCorrente;
+  if (heroCopy) heroCopy.textContent = `Eventi, locali e serate da scoprire stasera a ${cittaCorrente}.`;
+  if (heroBg) {
+    const image = CITY_HERO_IMAGES[cittaCorrente] || CITY_HERO_DEFAULT;
+    heroBg.style.backgroundImage = `url("${image}")`;
+  }
+
+  document.querySelectorAll(".city-suggestion").forEach(btn => {
+    btn.classList.toggle("attiva", normalizzaCitta(btn.dataset.citta) === cittaCorrente);
+  });
+}
+
+function apriCityModal() {
+  const modal = document.getElementById("city-modal");
+  const input = document.getElementById("input-citta-modal");
+  if (!modal) return;
+
+  modal.style.display = "flex";
+  if (input) {
+    input.value = cittaCorrente;
+    setTimeout(() => input.focus(), 50);
+  }
+  aggiornaHeroCitta();
+  lucide.createIcons();
+}
+
+function chiudiCityModal() {
+  const modal = document.getElementById("city-modal");
+  if (modal) modal.style.display = "none";
+}
 function dataLocale(data) {
   const anno = data.getFullYear();
   const mese = String(data.getMonth() + 1).padStart(2, "0");
@@ -162,7 +210,7 @@ document.querySelectorAll(".tipo-opzione").forEach(bottone => {
 // MAPPA
 const mappa = L.map('mappa').setView([45.0703, 7.6869], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
+  attribution: 'OpenStreetMap'
 }).addTo(mappa);
 
 let clusterEventi = L.markerClusterGroup({
@@ -186,9 +234,9 @@ function aggiornaMappa() {
       .bindPopup(`
         <strong>${evento.nome}</strong><br>
         ${evento.locale}<br>
-        ðŸ• ${evento.orario}<br>
-        ðŸ’¶ ${evento.prezzo}<br>
-        <a href="${urlEvento(evento.id)}" style="color:#e63946;">Vedi dettagli →</a>
+        Ore ${evento.orario}<br>
+        Prezzo ${evento.prezzo}<br>
+        <a href="${urlEvento(evento.id)}" style="color:#e63946;">Vedi dettagli</a>
       `);
 
     clusterEventi.addLayer(pin);
@@ -274,23 +322,19 @@ document.querySelectorAll(".nav-link[data-vista]").forEach(link => {
   });
 });
 
-// CERCA CITTÀ€
-document.getElementById("btn-citta").addEventListener("click", cercaCitta);
-document.getElementById("input-citta").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") cercaCitta();
-});
 
-function cercaCitta() {
-  const citta = document.getElementById("input-citta").value.trim();
-  if (!citta) return;
+function cambiaCitta(citta) {
+  const cittaNormalizzata = normalizzaCitta(citta);
+  if (!cittaNormalizzata) return;
 
-  fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(citta)}&format=json&limit=1`)
+  fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cittaNormalizzata)}&format=json&limit=1`)
     .then(res => res.json())
     .then(dati => {
-      if (dati.length === 0) { alert("CittÃ  non trovata, riprova."); return; }
-      const lat = parseFloat(dati[0].lat);
-      const lng = parseFloat(dati[0].lon);
-      mappa.setView([lat, lng], 13);
+      if (dati.length > 0) {
+        const lat = parseFloat(dati[0].lat);
+        const lng = parseFloat(dati[0].lon);
+        mappa.setView([lat, lng], 13);
+      }
 
       document.getElementById("vista-mappa").style.display = "block";
       document.getElementById("vista-calendario").style.display = "none";
@@ -299,10 +343,45 @@ function cercaCitta() {
       if (navMappa) navMappa.classList.add("attiva");
       setTimeout(() => mappa.invalidateSize(), 100);
 
-      caricaEventi(normalizzaCitta(citta));
+      chiudiCityModal();
+      caricaEventi(cittaNormalizzata);
+    })
+    .catch(() => {
+      chiudiCityModal();
+      caricaEventi(cittaNormalizzata);
     });
 }
+// CERCA CITTA
+document.getElementById("btn-citta").addEventListener("click", cercaCitta);
+document.getElementById("input-citta").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") cercaCitta();
+});
 
+function cercaCitta() {
+  const citta = document.getElementById("input-citta").value.trim();
+  if (!citta) return;
+  cambiaCitta(citta);
+}
+
+const btnCambiaCitta = document.getElementById("btn-cambia-citta");
+const btnChiudiCityModal = document.getElementById("city-modal-close");
+const cityModalOverlay = document.getElementById("city-modal-overlay");
+const btnCittaModal = document.getElementById("btn-citta-modal");
+const inputCittaModal = document.getElementById("input-citta-modal");
+
+if (btnCambiaCitta) btnCambiaCitta.addEventListener("click", apriCityModal);
+if (btnChiudiCityModal) btnChiudiCityModal.addEventListener("click", chiudiCityModal);
+if (cityModalOverlay) cityModalOverlay.addEventListener("click", chiudiCityModal);
+if (btnCittaModal && inputCittaModal) {
+  btnCittaModal.addEventListener("click", () => cambiaCitta(inputCittaModal.value));
+  inputCittaModal.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") cambiaCitta(inputCittaModal.value);
+  });
+}
+
+document.querySelectorAll(".city-suggestion").forEach(btn => {
+  btn.addEventListener("click", () => cambiaCitta(btn.dataset.citta));
+});
 // GEOLOCALIZZAZIONE
 document.getElementById("btn-geolocal").addEventListener("click", () => {
   if (!navigator.geolocation) { alert("Il tuo browser non supporta la geolocalizzazione."); return; }
@@ -358,7 +437,7 @@ async function aggiornaHeader() {
         navAccedi.style.display = "inline";
         btnNotifiche.style.display = "none";
         avatarLink.style.display = "none";
-        barraRicerca.style.display = "flex"; // â† cambia da "none" a "flex"
+        barraRicerca.style.display = "flex";
   if (navCalendario) navCalendario.style.display = "none";
 }
   lucide.createIcons();
@@ -472,7 +551,7 @@ document.getElementById("filtro-data-eventi").value = dataSelezionata;
 impostaCittaCorrente(cittaCorrente, false);
 aggiornaHeader();
 
-// GESTISCI REDIRECT DA ACCOUNT CON CITTÃ€
+// GESTISCI REDIRECT DA ACCOUNT CON CITTA
 const urlParams = new URLSearchParams(window.location.search);
 const cittaParam = urlParams.get("citta");
 const vistaParam = urlParams.get("vista");
