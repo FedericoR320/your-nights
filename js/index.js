@@ -65,6 +65,11 @@ function impostaCittaCorrente(citta, aggiornaUrl = true) {
   const inputCitta = document.getElementById("input-citta");
   if (inputCitta) inputCitta.value = cittaCorrente;
 
+  const inputCittaModal = document.getElementById("input-citta-modal");
+  if (inputCittaModal) inputCittaModal.value = cittaCorrente;
+
+  aggiornaHeroCitta();
+
   if (aggiornaUrl) {
     const params = new URLSearchParams(window.location.search);
     params.set("citta", cittaCorrente);
@@ -74,7 +79,12 @@ function impostaCittaCorrente(citta, aggiornaUrl = true) {
   aggiornaLinkCitta();
 }
 
+function getHeroImageCitta() {
+  if (CITY_HERO_IMAGES[cittaCorrente]) return CITY_HERO_IMAGES[cittaCorrente];
 
+  const query = encodeURIComponent(`${cittaCorrente} city skyline night`);
+  return `https://source.unsplash.com/1800x900/?${query}`;
+}
 function aggiornaHeroCitta() {
   const heroCitta = document.getElementById("hero-citta");
   const heroBg = document.getElementById("city-hero-bg");
@@ -83,7 +93,7 @@ function aggiornaHeroCitta() {
   if (heroCitta) heroCitta.textContent = cittaCorrente;
   if (heroCopy) heroCopy.textContent = `Eventi, locali e serate da scoprire stasera a ${cittaCorrente}.`;
   if (heroBg) {
-    const image = CITY_HERO_IMAGES[cittaCorrente] || CITY_HERO_DEFAULT;
+    const image = getHeroImageCitta();
     heroBg.style.backgroundImage = `url("${image}")`;
   }
 
