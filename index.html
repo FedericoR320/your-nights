@@ -24,6 +24,7 @@
     <div class="cerca-citta" id="barra-ricerca" style="display:none">
       <input type="text" id="input-citta" placeholder="Cerca città..." />
       <button id="btn-citta">Vai</button>
+      <div id="risultati-ricerca" class="global-search-results"></div>
     </div>
 
     <nav>
@@ -69,7 +70,7 @@
     <div class="date-toolbar">
 
     <button id="btn-oggi" class="date-chip attivo">
-      Oggi
+      Stasera
     </button>
 
     <button id="btn-domani" class="date-chip">
@@ -77,12 +78,16 @@
     </button>
 
     <button id="btn-dopodomani" class="date-chip">
-      Dopodomani
+      Weekend
     </button>
 
     <button id="btn-calendario-data" class="date-calendar-btn" type="button">
       <i data-lucide="calendar"></i>
     </button>
+
+    <button id="btn-gratis" class="date-chip quick-filter" type="button">Gratis</button>
+    <button id="btn-live" class="date-chip quick-filter" type="button">Live</button>
+    <button id="btn-dj" class="date-chip quick-filter" type="button">DJ set</button>
 
     <input type="date" id="filtro-data-eventi">
   </div>
@@ -127,6 +132,7 @@
         <i data-lucide="search"></i>
         <input type="text" id="input-citta-modal" placeholder="Cerca citta" />
         <button id="btn-citta-modal" type="button">Vai</button>
+        <div id="risultati-ricerca-modal" class="global-search-results modal-search-results"></div>
       </div>
       <div class="city-suggestions">
         <button class="city-suggestion" data-citta="Torino" type="button">Torino</button>

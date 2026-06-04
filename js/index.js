@@ -4,6 +4,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let eventi = [];
 let cittaCorrente = getCittaIniziale();
 let filtroTipoCorrente = "tutti";
+let filtroPeriodoCorrente = "singolo";
+let filtroGratisCorrente = false;
+let testoRicercaCorrente = "";
 let dataSelezionata = dataLocale(new Date());
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -40,6 +43,8 @@ const CITY_HERO_IMAGES = {
 };
 
 const CITY_HERO_DEFAULT = "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1800&q=80";
+
+const CITTA_RICERCA = Object.keys(CITY_HERO_IMAGES);
 
 const SEARCH_PLACEHOLDERS = [
   "Cerca citta...",
@@ -153,11 +158,71 @@ function aggiungiGiorni(data, giorni) {
   return nuovaData;
 }
 
+function getWeekendRange() {
+  const oggi = new Date();
+  const giorno = oggi.getDay();
+  const giorniAFineSettimana = giorno === 0 ? -2 : giorno <= 5 ? 5 - giorno : -1;
+  const venerdi = aggiungiGiorni(oggi, giorniAFineSettimana);
+  const domenica = aggiungiGiorni(venerdi, 2);
+  return {
+    inizio: dataLocale(venerdi),
+    fine: dataLocale(domenica)
+  };
+}
+
+function eventoGratis(evento) {
+  const prezzo = String(evento.prezzo || "").toLowerCase().trim();
+  return prezzo === "0" || prezzo === "0 euro" || prezzo === "€0" || prezzo === "0€" || prezzo.includes("gratis") || prezzo.includes("free");
+}
+
+function testoEvento(evento) {
+  return [evento.nome, evento.locale, evento.tipo, evento.citta, evento.descrizione]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function aggiornaStatoQuickFilters() {
+  document.querySelectorAll(".date-chip").forEach(btn => btn.classList.remove("attivo"));
+
+  if (filtroPeriodoCorrente === "weekend") {
+    document.getElementById("btn-dopodomani")?.classList.add("attivo");
+  } else if (dataSelezionata === dataLocale(new Date())) {
+    document.getElementById("btn-oggi")?.classList.add("attivo");
+  } else if (dataSelezionata === dataLocale(aggiungiGiorni(new Date(), 1))) {
+    document.getElementById("btn-domani")?.classList.add("attivo");
+  }
+
+  document.getElementById("btn-gratis")?.classList.toggle("attivo", filtroGratisCorrente);
+  document.getElementById("btn-live")?.classList.toggle("attivo", filtroTipoCorrente === "live");
+  document.getElementById("btn-dj")?.classList.toggle("attivo", filtroTipoCorrente === "dj");
+}
+
+function aggiornaTipoAttivo(tipo) {
+  document.querySelectorAll(".tipo-opzione").forEach(btn => {
+    btn.classList.toggle("attivo", btn.dataset.tipo === tipo);
+  });
+}
+
+function applicaFiltri() {
+  mostraEventi();
+  aggiornaMappa();
+  aggiornaStatoSalvataggi();
+  aggiornaStatoQuickFilters();
+}
 function getEventiVisibili() {
+  const weekend = getWeekendRange();
+  const ricerca = testoRicercaCorrente.trim().toLowerCase();
+
   return eventi.filter(e => {
     const matchTipo = filtroTipoCorrente === "tutti" || e.tipo === filtroTipoCorrente;
-    const matchData = e.data === dataSelezionata;
-    return matchTipo && matchData;
+    const matchData = filtroPeriodoCorrente === "weekend"
+      ? e.data >= weekend.inizio && e.data <= weekend.fine
+      : e.data === dataSelezionata;
+    const matchGratis = !filtroGratisCorrente || eventoGratis(e);
+    const matchRicerca = !ricerca || testoEvento(e).includes(ricerca);
+
+    return matchTipo && matchData && matchGratis && matchRicerca;
   });
 }
 
@@ -236,12 +301,11 @@ document.querySelectorAll(".tipo-opzione").forEach(bottone => {
     bottone.classList.add("attivo");
 
     filtroTipoCorrente = bottone.dataset.tipo;
+    aggiornaTipoAttivo(filtroTipoCorrente);
 
     document.getElementById("menu-tipi").classList.remove("aperto");
 
-    mostraEventi();
-    aggiornaMappa();
-    aggiornaStatoSalvataggi();
+    applicaFiltri();
   });
 });
 
@@ -433,11 +497,150 @@ function cambiaCitta(citta) {
     })
     .catch(() => {});
 }
+
+function getRisultatiRicerca(query) {
+  const q = query.trim().toLowerCase();
+  if (q.length < 2) return [];
+
+  const risultatiCitta = CITTA_RICERCA
+    .filter(citta => citta.toLowerCase().includes(q))
+    .slice(0, 4)
+    .map(citta => ({ tipo: "citta", titolo: citta, meta: "Cambia citta", valore: citta, icona: "map-pin" }));
+
+  const risultatiEventi = eventi
+    .filter(evento => testoEvento(evento).includes(q))
+    .slice(0, 5)
+    .map(evento => ({
+      tipo: "evento",
+      titolo: evento.nome || "Evento",
+      meta: `${evento.locale || cittaCorrente} - ${evento.orario || ""}`,
+      valore: evento.id,
+      icona: "calendar-days"
+    }));
+
+  const localiUnici = [];
+  eventi.forEach(evento => {
+    const locale = evento.locale;
+    if (!locale) return;
+    if (!locale.toLowerCase().includes(q)) return;
+    if (localiUnici.some(item => item.toLowerCase() === locale.toLowerCase())) return;
+    localiUnici.push(locale);
+  });
+
+  const risultatiLocali = localiUnici.slice(0, 4).map(locale => ({
+    tipo: "locale",
+    titolo: locale,
+    meta: `Locale a ${cittaCorrente}`,
+    valore: locale,
+    icona: "building-2"
+  }));
+
+  return [...risultatiCitta, ...risultatiEventi, ...risultatiLocali].slice(0, 8);
+}
+
+function renderRisultatiRicerca(input, container) {
+  if (!input || !container) return;
+
+  const risultati = getRisultatiRicerca(input.value);
+  if (risultati.length === 0) {
+    container.classList.remove("aperto");
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = risultati.map((risultato, index) => `
+    <button class="search-result-btn" type="button" data-search-index="${index}">
+      <span class="search-result-icon"><i data-lucide="${risultato.icona}"></i></span>
+      <span>
+        <span class="search-result-title">${risultato.titolo}</span>
+        <span class="search-result-meta">${risultato.meta}</span>
+      </span>
+      <span class="search-result-kind">${risultato.tipo}</span>
+    </button>
+  `).join("");
+
+  container.classList.add("aperto");
+
+  container.querySelectorAll(".search-result-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const risultato = risultati[Number(btn.dataset.searchIndex)];
+      applicaRisultatoRicerca(risultato, input, container);
+    });
+  });
+
+  lucide.createIcons();
+}
+
+function applicaRisultatoRicerca(risultato, input, container) {
+  if (!risultato) return;
+
+  container?.classList.remove("aperto");
+  if (input) input.value = risultato.titolo;
+
+  if (risultato.tipo === "citta") {
+    testoRicercaCorrente = "";
+    cambiaCitta(risultato.valore);
+    return;
+  }
+
+  if (risultato.tipo === "evento") {
+    window.location.href = urlEvento(risultato.valore);
+    return;
+  }
+
+  if (risultato.tipo === "locale") {
+    testoRicercaCorrente = risultato.valore;
+    applicaFiltri();
+    document.getElementById("lista-eventi")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function eseguiRicercaGlobale(input, container) {
+  if (!input) return;
+  const query = input.value.trim();
+  if (!query) return;
+
+  const risultati = getRisultatiRicerca(query);
+  if (risultati.length > 0) {
+    applicaRisultatoRicerca(risultati[0], input, container);
+    return;
+  }
+
+  testoRicercaCorrente = "";
+  cambiaCitta(query);
+}
+
+function setupRicercaGlobale(inputId, containerId, buttonId = null) {
+  const input = document.getElementById(inputId);
+  const container = document.getElementById(containerId);
+  const button = buttonId ? document.getElementById(buttonId) : null;
+
+  if (!input || !container) return;
+
+  input.addEventListener("input", () => {
+    if (!input.value.trim() && testoRicercaCorrente) {
+      testoRicercaCorrente = "";
+      applicaFiltri();
+    }
+    renderRisultatiRicerca(input, container);
+  });
+  input.addEventListener("focus", () => renderRisultatiRicerca(input, container));
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      eseguiRicercaGlobale(input, container);
+    }
+    if (e.key === "Escape") {
+      container.classList.remove("aperto");
+    }
+  });
+
+  if (button) {
+    button.addEventListener("click", () => eseguiRicercaGlobale(input, container));
+  }
+}
 // CERCA CITTA
-document.getElementById("btn-citta").addEventListener("click", cercaCitta);
-document.getElementById("input-citta").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") cercaCitta();
-});
+setupRicercaGlobale("input-citta", "risultati-ricerca", "btn-citta");
 
 function cercaCitta() {
   const citta = document.getElementById("input-citta").value.trim();
@@ -454,15 +657,17 @@ const inputCittaModal = document.getElementById("input-citta-modal");
 if (btnCambiaCitta) btnCambiaCitta.addEventListener("click", apriCityModal);
 if (btnChiudiCityModal) btnChiudiCityModal.addEventListener("click", chiudiCityModal);
 if (cityModalOverlay) cityModalOverlay.addEventListener("click", chiudiCityModal);
-if (btnCittaModal && inputCittaModal) {
-  btnCittaModal.addEventListener("click", () => cambiaCitta(inputCittaModal.value));
-  inputCittaModal.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") cambiaCitta(inputCittaModal.value);
-  });
-}
+setupRicercaGlobale("input-citta-modal", "risultati-ricerca-modal", "btn-citta-modal");
 
 document.querySelectorAll(".city-suggestion").forEach(btn => {
   btn.addEventListener("click", () => cambiaCitta(btn.dataset.citta));
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".cerca-citta") && !e.target.closest(".city-modal-search")) {
+    document.getElementById("risultati-ricerca")?.classList.remove("aperto");
+    document.getElementById("risultati-ricerca-modal")?.classList.remove("aperto");
+  }
 });
 // GEOLOCALIZZAZIONE
 document.getElementById("btn-geolocal").addEventListener("click", () => {
@@ -584,14 +789,10 @@ async function aggiornaStatoSalvataggi() {
 
 function impostaDataSelezionata(data, bottoneAttivo = null) {
   dataSelezionata = dataLocale(data);
+  filtroPeriodoCorrente = "singolo";
   document.getElementById("filtro-data-eventi").value = dataSelezionata;
 
-  document.querySelectorAll(".date-chip").forEach(btn => btn.classList.remove("attivo"));
-  if (bottoneAttivo) bottoneAttivo.classList.add("attivo");
-
-  mostraEventi();
-  aggiornaMappa();
-  aggiornaStatoSalvataggi();
+  applicaFiltri();
 }
 
 document.getElementById("btn-oggi").addEventListener("click", () => {
@@ -603,20 +804,36 @@ document.getElementById("btn-domani").addEventListener("click", () => {
 });
 
 document.getElementById("btn-dopodomani").addEventListener("click", () => {
-  impostaDataSelezionata(aggiungiGiorni(new Date(), 2), document.getElementById("btn-dopodomani"));
+  filtroPeriodoCorrente = "weekend";
+  applicaFiltri();
 });
 
 document.getElementById("filtro-data-eventi").addEventListener("change", (e) => {
   if (!e.target.value) return;
 
   dataSelezionata = e.target.value;
-  document.querySelectorAll(".date-chip").forEach(btn => btn.classList.remove("attivo"));
+  filtroPeriodoCorrente = "singolo";
 
-  mostraEventi();
-  aggiornaMappa();
-  aggiornaStatoSalvataggi();
+  applicaFiltri();
 });
 
+
+document.getElementById("btn-gratis")?.addEventListener("click", () => {
+  filtroGratisCorrente = !filtroGratisCorrente;
+  applicaFiltri();
+});
+
+document.getElementById("btn-live")?.addEventListener("click", () => {
+  filtroTipoCorrente = filtroTipoCorrente === "live" ? "tutti" : "live";
+  aggiornaTipoAttivo(filtroTipoCorrente);
+  applicaFiltri();
+});
+
+document.getElementById("btn-dj")?.addEventListener("click", () => {
+  filtroTipoCorrente = filtroTipoCorrente === "dj" ? "tutti" : "dj";
+  aggiornaTipoAttivo(filtroTipoCorrente);
+  applicaFiltri();
+});
 const btnCalendarioData = document.getElementById("btn-calendario-data");
 const inputDataEventi = document.getElementById("filtro-data-eventi");
 
