@@ -5,17 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Locali | Your Nights</title>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/locali.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 
 <body>
-
   <header>
     <a href="index.html" class="logo">Your Nights</a>
 
     <div class="cerca-citta" id="barra-ricerca-locali">
-      <input type="text" id="input-citta-locali" placeholder="Cerca città..." />
+      <input type="text" id="input-citta-locali" placeholder="Cerca citta..." />
       <button id="btn-citta-locali">Vai</button>
     </div>
 
@@ -27,29 +29,65 @@
   </header>
 
   <main class="locali-page">
-
     <section class="locali-hero">
-      <h1>Locali</h1>
-      <p>Scopri i locali della città, guarda le vibe e trova le prossime serate.</p>
+      <div class="locali-hero-copy">
+        <span class="locali-eyebrow">Your Nights locali</span>
+        <h1>Locali a <span id="locali-citta-titolo">Torino</span></h1>
+        <p id="locali-hero-copy">Cocktail bar, pub e club da tenere d'occhio per la prossima uscita.</p>
+      </div>
+
+      <div class="locali-hero-actions">
+        <div class="locali-search">
+          <i data-lucide="search"></i>
+          <input type="text" id="input-ricerca-locale" placeholder="Cerca locale, via o categoria..." />
+        </div>
+
+        <a href="index.html" id="link-eventi-citta" class="locali-map-link">
+          <i data-lucide="map"></i>
+          Vedi eventi
+        </a>
+      </div>
     </section>
 
     <section class="locali-toolbar">
       <button class="locale-filtro attivo" data-categoria="tutti">Tutti</button>
+      <button class="locale-filtro" data-categoria="bar">Bar</button>
+      <button class="locale-filtro" data-categoria="cocktail">Cocktail</button>
       <button class="locale-filtro" data-categoria="club">Club</button>
       <button class="locale-filtro" data-categoria="pub">Pub</button>
-      <button class="locale-filtro" data-categoria="live">Live Music</button>
-      <button class="locale-filtro" data-categoria="cocktail">Cocktail Bar</button>
+      <button class="locale-filtro" data-categoria="wine_bar">Wine bar</button>
     </section>
 
-    <section id="lista-locali">
-      <div id="locali-container"></div>
-    </section>
+    <section class="locali-layout">
+      <div class="locali-results">
+        <div class="locali-section-head">
+          <div>
+            <h2 id="locali-count">Locali trovati</h2>
+            <p id="locali-status">Caricamento locali...</p>
+          </div>
+        </div>
 
+        <div id="locali-container"></div>
+      </div>
+
+      <aside class="locali-map-panel">
+        <div class="locali-map-head">
+          <div>
+            <span>Mappa locali</span>
+            <strong id="locali-map-city">Torino</strong>
+          </div>
+          <button id="btn-centra-mappa" type="button" aria-label="Centra mappa">
+            <i data-lucide="crosshair"></i>
+          </button>
+        </div>
+
+        <div id="mappa-locali"></div>
+      </aside>
+    </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/locali.js"></script>
   <script>lucide.createIcons();</script>
-
 </body>
 </html>

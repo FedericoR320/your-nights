@@ -1,132 +1,416 @@
 /* PAGINA LOCALI */
 .locali-page {
-  max-width: 1300px;
+  width: min(1440px, 100%);
   margin: 0 auto;
-  padding: 48px 32px;
+  padding: 34px 32px 56px;
 }
 
 .locali-hero {
-  margin-bottom: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 480px);
+  gap: 28px;
+  align-items: end;
+  margin-bottom: 22px;
+}
+
+.locali-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  color: #ff5a66;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .locali-hero h1 {
-  font-size: 2rem;
-  color: #f0f0f0;
-  margin-bottom: 8px;
+  color: #f7f7f7;
+  font-size: clamp(2.25rem, 5vw, 4.6rem);
+  line-height: 0.98;
+  margin-bottom: 14px;
 }
 
 .locali-hero p {
-  color: #888;
+  max-width: 640px;
+  color: #b8b8b8;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.locali-hero-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.locali-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 16px;
+  background: #181818;
+  border: 1px solid #303030;
+  border-radius: 999px;
+}
+
+.locali-search i {
+  width: 18px;
+  height: 18px;
+  color: #e63946;
+  flex: 0 0 auto;
+}
+
+.locali-search input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: #f0f0f0;
   font-size: 0.95rem;
+}
+
+.locali-search input::placeholder {
+  color: #707070;
+}
+
+.locali-map-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  color: #f4f4f4;
+  background: #e63946;
+  border: 1px solid #e63946;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.locali-map-link:hover {
+  background: #c1121f;
+  border-color: #c1121f;
+}
+
+.locali-map-link i {
+  width: 17px;
+  height: 17px;
 }
 
 .locali-toolbar {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 28px;
+  margin-bottom: 22px;
 }
 
 .locale-filtro {
-  background: #1e1e1e;
-  color: #ccc;
-  border: 1px solid #333;
-  padding: 8px 18px;
-  border-radius: 20px;
+  min-height: 38px;
+  background: #1b1b1b;
+  color: #d7d7d7;
+  border: 1px solid #343434;
+  padding: 0 16px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s;
+  font-size: 0.86rem;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
 .locale-filtro:hover {
   border-color: #e63946;
-  color: #e63946;
+  color: #fff;
 }
 
 .locale-filtro.attivo {
   background: #e63946;
-  color: white;
+  color: #fff;
   border-color: #e63946;
+}
+
+.locali-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+  gap: 24px;
+  align-items: start;
+}
+
+.locali-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.locali-section-head h2 {
+  color: #f5f5f5;
+  font-size: 1.15rem;
+  margin-bottom: 4px;
+}
+
+.locali-section-head p {
+  color: #858585;
+  font-size: 0.9rem;
 }
 
 #locali-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 16px;
 }
 
 .locale-card {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 14px;
+  min-height: 100%;
+  background: #171717;
+  border: 1px solid #2b2b2b;
+  border-radius: 12px;
   overflow: hidden;
-  transition: all 0.2s;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
 }
 
 .locale-card:hover {
-  transform: translateY(-4px);
-  border-color: #e63946;
+  transform: translateY(-3px);
+  border-color: rgba(230, 57, 70, 0.75);
+  background: #1b1b1b;
 }
 
 .locale-img {
-  height: 190px;
+  position: relative;
+  height: 152px;
   background-size: cover;
   background-position: center;
 }
 
-.locale-body {
-  padding: 18px 20px 22px;
+.locale-img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.72));
 }
 
-.locale-body .tipo {
+.locale-badge {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  color: #fff;
+  background: rgba(230, 57, 70, 0.92);
+  border-radius: 999px;
   font-size: 0.72rem;
-  color: #e63946;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+}
+
+.locale-body {
+  padding: 16px 18px 18px;
 }
 
 .locale-body h3 {
-  font-size: 1.1rem;
+  color: #fff;
+  font-size: 1.08rem;
+  line-height: 1.25;
   margin-bottom: 10px;
 }
 
-.locale-indirizzo {
-  color: #888;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
+.locale-meta {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 13px;
 }
 
-.locale-indirizzo i {
+.locale-meta-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #a9a9a9;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.locale-meta-row i {
+  width: 15px;
+  height: 15px;
+  color: #e63946;
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.locale-descrizione {
+  min-height: 42px;
+  color: #8d8d8d;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.locale-actions {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.locale-actions a,
+.locale-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 12px;
+  color: #eee;
+  background: #202020;
+  border: 1px solid #333;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.locale-actions a:hover,
+.locale-actions button:hover {
+  border-color: #e63946;
+  color: #fff;
+}
+
+.locale-actions i {
   width: 14px;
   height: 14px;
 }
 
-.locale-descrizione {
-  color: #777;
-  font-size: 0.86rem;
-  line-height: 1.5;
-  margin-bottom: 16px;
+.locali-map-panel {
+  position: sticky;
+  top: 18px;
+  overflow: hidden;
+  background: #151515;
+  border: 1px solid #2b2b2b;
+  border-radius: 16px;
 }
 
-.locale-social {
+.locali-map-head {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 16px;
+  border-bottom: 1px solid #262626;
 }
 
-.locale-social a {
-  color: #e63946;
+.locali-map-head span {
+  display: block;
+  color: #858585;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.locali-map-head strong {
+  display: block;
+  color: #fff;
+  margin-top: 3px;
+}
+
+#btn-centra-mappa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  color: #eee;
+  background: #202020;
   border: 1px solid #333;
-  padding: 6px 12px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-size: 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
 }
 
-.locale-social a:hover {
+#btn-centra-mappa:hover {
   border-color: #e63946;
+}
+
+#btn-centra-mappa i {
+  width: 17px;
+  height: 17px;
+}
+
+#mappa-locali {
+  height: 640px;
+  min-height: 420px;
+  background: #101010;
+}
+
+.locale-popup {
+  color: #202020;
+}
+
+.locale-popup strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 28px;
+  color: #a8a8a8;
+  background: #171717;
+  border: 1px solid #2b2b2b;
+  border-radius: 12px;
+}
+
+@media (max-width: 980px) {
+  .locali-page {
+    padding: 28px 18px 44px;
+  }
+
+  .locali-hero,
+  .locali-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .locali-map-panel {
+    position: relative;
+    top: auto;
+    order: -1;
+  }
+
+  #mappa-locali {
+    height: 360px;
+  }
+}
+
+@media (max-width: 680px) {
+  header {
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 18px;
+  }
+
+  .cerca-citta {
+    order: 3;
+    flex-basis: 100%;
+    margin: 0;
+  }
+
+  nav {
+    margin-left: auto;
+  }
+
+  nav a,
+  .nav-link {
+    margin-left: 12px;
+  }
+
+  .locali-hero h1 {
+    font-size: 2.35rem;
+  }
+
+  #locali-container {
+    grid-template-columns: 1fr;
+  }
 }
