@@ -268,6 +268,7 @@ function creaCardLocale(locale) {
   const img = locale.immagine || CATEGORY_IMAGES[categoria] || CATEGORY_IMAGES.locale;
   const website = normalizeUrl(locale.website || locale.sito_url);
   const instagram = normalizeUrl(locale.instagram_url);
+  const detailUrl = `locale.html?id=${encodeURIComponent(locale.id)}&citta=${encodeURIComponent(locale.citta || cittaCorrente)}`;
   const mapsUrl = locale.lat && locale.lng
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${locale.lat},${locale.lng}`)}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${locale.nome} ${locale.indirizzo || cittaCorrente}`)}`;
@@ -279,7 +280,7 @@ function creaCardLocale(locale) {
       </div>
 
       <div class="locale-body">
-        <h3>${escapeHtml(locale.nome)}</h3>
+        <h3><a class="locale-title-link" href="${detailUrl}">${escapeHtml(locale.nome)}</a></h3>
 
         <div class="locale-meta">
           <p class="locale-meta-row">
@@ -300,6 +301,10 @@ function creaCardLocale(locale) {
         </p>
 
         <div class="locale-actions">
+          <a href="${detailUrl}">
+            <i data-lucide="arrow-right"></i>
+            Dettagli
+          </a>
           <a href="${mapsUrl}" target="_blank" rel="noopener">
             <i data-lucide="navigation"></i>
             Mappa

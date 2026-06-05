@@ -218,6 +218,15 @@
   margin-bottom: 10px;
 }
 
+.locale-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.locale-title-link:hover {
+  color: #ff5a66;
+}
+
 .locale-meta {
   display: grid;
   gap: 8px;

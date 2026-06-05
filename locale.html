@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Locale | Your Nights</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/locale.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <a href="index.html" class="logo">Your Nights</a>
+    <nav>
+      <a href="locali.html" id="link-torna-locali" class="nav-link">
+        <i data-lucide="arrow-left"></i>
+        Torna ai locali
+      </a>
+    </nav>
+  </header>
+
+  <div id="locale-container">
+    <div id="dettaglio-locale">
+      <p class="locale-loading">Caricamento locale...</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/locale.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
