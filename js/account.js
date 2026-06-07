@@ -1,9 +1,7 @@
 const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
-const supabaseClient = window.supabase
-  ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-  : null;
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let utenteCorrente = null;
 let eventiSalvatiCache = [];
@@ -126,11 +124,6 @@ function mostraVista(nomeVista) {
 }
 
 async function registrati() {
-  if (!supabaseClient) {
-    el("reg-messaggio").textContent = "Servizio account non caricato. Ricarica la pagina tra qualche secondo.";
-    return;
-  }
-
   const username = el("reg-username").value.trim();
   const email = el("reg-email").value.trim();
   const password = el("reg-password").value.trim();
@@ -184,11 +177,6 @@ async function registrati() {
 }
 
 async function login() {
-  if (!supabaseClient) {
-    el("auth-messaggio").textContent = "Servizio account non caricato. Ricarica la pagina tra qualche secondo.";
-    return;
-  }
-
   const email = el("auth-email").value.trim();
   const password = el("auth-password").value.trim();
   const msg = el("auth-messaggio");
@@ -214,11 +202,6 @@ async function login() {
 }
 
 async function recuperaPassword() {
-  if (!supabaseClient) {
-    el("recupera-messaggio").textContent = "Servizio account non caricato. Ricarica la pagina tra qualche secondo.";
-    return;
-  }
-
   const email = el("recupera-email").value.trim();
   const msg = el("recupera-messaggio");
 
@@ -629,13 +612,6 @@ function vaiAllaCitta() {
 }
 
 async function controllaSessione() {
-  if (!supabaseClient) {
-    el("sezione-auth").style.display = "block";
-    el("sezione-profilo").style.display = "none";
-    mostraBox(window.location.hash === "#registrati" ? "registrazione" : "login");
-    return;
-  }
-
   const { data } = await supabaseClient.auth.getSession();
 
   if (data.session) {

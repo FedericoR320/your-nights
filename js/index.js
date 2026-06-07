@@ -9,9 +9,7 @@ let filtroGratisCorrente = false;
 let testoRicercaCorrente = "";
 let dataSelezionata = dataLocale(new Date());
 
-const supabaseClient = window.supabase
-  ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-  : null;
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const CITY_HERO_IMAGES = {
   Torino: "https://images.unsplash.com/photo-1610651219730-6b580d616e72?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   Milano: "https://images.unsplash.com/photo-1513581166391-887a96ddeafd?auto=format&fit=crop&w=1800&q=80",
@@ -393,14 +391,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: 'OpenStreetMap'
 }).addTo(mappa);
 
-let clusterEventi = window.L?.markerClusterGroup
-  ? L.markerClusterGroup({
-      showCoverageOnHover: false,
-      spiderfyOnMaxZoom: true,
-      disableClusteringAtZoom: 17,
-      maxClusterRadius: 45
-    })
-  : L.layerGroup();
+let clusterEventi = L.markerClusterGroup({
+  showCoverageOnHover: false,
+  spiderfyOnMaxZoom: true,
+  disableClusteringAtZoom: 17,
+  maxClusterRadius: 45
+});
 
 mappa.addLayer(clusterEventi);
 
@@ -845,12 +841,6 @@ document.getElementById("btn-geolocal").addEventListener("click", () => {
 
 // STATO UTENTE NELL'HEADER
 async function aggiornaHeader() {
-  if (!supabaseClient) {
-    document.getElementById("barra-ricerca").style.display = "flex";
-    lucide.createIcons();
-    return;
-  }
-
   const { data } = await supabaseClient.auth.getSession();
 
   const btnNotifiche = document.getElementById("btn-notifiche");
@@ -889,11 +879,6 @@ async function aggiornaHeader() {
 }
 
 async function salvaEvento(eventoId, btn) {
-  if (!supabaseClient) {
-    apriPopupLogin();
-    return;
-  }
-
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const user = sessionData?.session?.user;
   if (!user) { apriPopupLogin(); return; }
@@ -925,8 +910,6 @@ function chiudiPopupLogin() {
 }
 
 async function aggiornaStatoSalvataggi() {
-  if (!supabaseClient) return;
-
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const user = sessionData?.session?.user;
   if (!user) return;
