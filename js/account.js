@@ -71,6 +71,9 @@ function aggiornaLinkCitta() {
   document.querySelectorAll('a[href^="account.html"]').forEach(link => {
     link.href = urlConCitta("account.html");
   });
+
+  const linkAdmin = el("link-admin-panel");
+  if (linkAdmin) linkAdmin.href = urlConCitta("admin.html");
 }
 
 function impostaCittaCorrente(citta, aggiornaUrl = true) {
@@ -229,7 +232,7 @@ async function mostraProfilo(user) {
 
   const { data: profilo, error } = await supabaseClient
     .from("profili")
-    .select("username, avatar_url")
+    .select("username, avatar_url, is_admin")
     .eq("id", user.id)
     .single();
 
@@ -247,6 +250,12 @@ async function mostraProfilo(user) {
 
   if (profilo?.avatar_url) {
     mostraAvatar(profilo.avatar_url);
+  }
+
+  const adminLink = el("link-admin-panel");
+  if (adminLink && profilo?.is_admin === true) {
+    adminLink.style.display = "inline-flex";
+    adminLink.href = urlConCitta("admin.html");
   }
 
   el("sezione-auth").style.display = "none";
@@ -541,6 +550,7 @@ async function logout() {
 
   el("btn-notifiche").style.display = "none";
   el("avatar-link").style.display = "none";
+  if (el("link-admin-panel")) el("link-admin-panel").style.display = "none";
 
   el("sezione-profilo").style.display = "none";
   el("sezione-auth").style.display = "block";
@@ -621,6 +631,7 @@ async function controllaSessione() {
     el("sezione-profilo").style.display = "none";
     el("btn-notifiche").style.display = "none";
     el("avatar-link").style.display = "none";
+    if (el("link-admin-panel")) el("link-admin-panel").style.display = "none";
     mostraBox("login");
   }
 }
