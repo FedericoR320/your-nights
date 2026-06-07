@@ -6,7 +6,10 @@
     EN: {
       "Locali": "Venues",
       "Mappa": "Map",
-      "Accedi": "Log in",
+      "Eventi": "Events",
+      "Accedi": "Account",
+      "Login": "Account",
+      "Torna al login": "Back to account",
       "Account": "Account",
       "Calendario": "Calendar",
       "Your Nights in": "Your Nights in",
@@ -52,7 +55,10 @@
     FR: {
       "Locali": "Lieux",
       "Mappa": "Carte",
-      "Accedi": "Connexion",
+      "Eventi": "Evenements",
+      "Accedi": "Compte",
+      "Login": "Compte",
+      "Torna al login": "Retour au compte",
       "Account": "Compte",
       "Calendario": "Calendrier",
       "Scegli la citta": "Choisir la ville",
@@ -97,7 +103,10 @@
     ES: {
       "Locali": "Locales",
       "Mappa": "Mapa",
-      "Accedi": "Entrar",
+      "Eventi": "Eventos",
+      "Accedi": "Cuenta",
+      "Login": "Cuenta",
+      "Torna al login": "Volver a cuenta",
       "Account": "Cuenta",
       "Calendario": "Calendario",
       "Scegli la citta": "Elige ciudad",
@@ -142,7 +151,10 @@
     DE: {
       "Locali": "Locations",
       "Mappa": "Karte",
-      "Accedi": "Einloggen",
+      "Eventi": "Events",
+      "Accedi": "Konto",
+      "Login": "Konto",
+      "Torna al login": "Zuruck zum Konto",
       "Account": "Konto",
       "Calendario": "Kalender",
       "Scegli la citta": "Stadt wahlen",
@@ -220,6 +232,29 @@
     if (DICT[lang]?.[source]) return DICT[lang][source];
 
     let output = source;
+    const localPrefix = source.match(/^Locali a\s*$/);
+    if (localPrefix) {
+      const map = {
+        EN: "Venues in ",
+        FR: "Lieux a ",
+        ES: "Locales en ",
+        DE: "Locations in "
+      };
+      return map[lang] || source;
+    }
+
+    const eventCity = source.match(/^(Stasera|Serate ed eventi|Eventi e serate|Serate e eventi) a (.+)$/i);
+    if (eventCity) {
+      const city = eventCity[2];
+      const map = {
+        EN: `Events in ${city}`,
+        FR: `Evenements a ${city}`,
+        ES: `Eventos en ${city}`,
+        DE: `Events in ${city}`
+      };
+      return map[lang] || source;
+    }
+
     const cityTonight = source.match(/^Stasera a (.+)$/);
     if (cityTonight) {
       const city = cityTonight[1];
@@ -251,6 +286,20 @@
       DE: "Events, Locations und Abende heute in"
     }[lang] || "Eventi, locali e serate da scoprire stasera a");
 
+    output = output.replace(/Cocktail bar, pub e club di (.+) da tenere d'occhio per la prossima uscita\./, (_, city) => ({
+      EN: `Cocktail bars, pubs and clubs in ${city} to keep an eye on for your next night out.`,
+      FR: `Cocktail bars, pubs et clubs a ${city} a suivre pour votre prochaine sortie.`,
+      ES: `Cocktail bars, pubs y clubs en ${city} para tu proxima salida.`,
+      DE: `Cocktailbars, Pubs und Clubs in ${city} fur deinen nachsten Abend.`
+    }[lang] || source));
+
+    output = output.replace("Cocktail bar, pub e club da tenere d'occhio per la prossima uscita.", {
+      EN: "Cocktail bars, pubs and clubs to keep an eye on for your next night out.",
+      FR: "Cocktail bars, pubs et clubs a suivre pour votre prochaine sortie.",
+      ES: "Cocktail bars, pubs y clubs para tu proxima salida.",
+      DE: "Cocktailbars, Pubs und Clubs fur deinen nachsten Abend."
+    }[lang] || "Cocktail bar, pub e club da tenere d'occhio per la prossima uscita.");
+
     return output;
   }
 
@@ -270,17 +319,32 @@
     document.querySelectorAll("body *").forEach(el => {
       if (el.closest(".yn-lang-switcher")) return;
       if (["SCRIPT", "STYLE", "LINK", "META"].includes(el.tagName)) return;
-      if (el.children.length > 0) return;
 
-      const text = el.textContent.trim();
-      if (!text) return;
+      const translateNodeText = (text, key, setter) => {
+        const trimmed = text.trim();
+        if (!trimmed) return;
 
-      const source = el.dataset.i18nSource || sourceFromTranslated(text);
-      const translated = translateText(source, lang);
-      if (translated !== text) {
-        el.dataset.i18nSource = source;
-        el.textContent = translated;
+        const storedSource = el.dataset[key];
+        const expected = storedSource ? translateText(storedSource, lang) : "";
+        const source = storedSource && trimmed === expected
+          ? storedSource
+          : sourceFromTranslated(trimmed);
+        const translated = translateText(source, lang);
+
+        el.dataset[key] = source;
+        if (translated !== trimmed) setter(text.replace(trimmed, translated));
+      };
+
+      if (el.children.length === 0) {
+        translateNodeText(el.textContent, "i18nSource", value => { el.textContent = value; });
+        return;
       }
+
+      Array.from(el.childNodes)
+        .filter(node => node.nodeType === Node.TEXT_NODE)
+        .forEach((node, index) => {
+          translateNodeText(node.textContent, `i18nDirectSource${index}`, value => { node.textContent = value; });
+        });
     });
 
     document.querySelectorAll("input[placeholder]").forEach(input => {
@@ -295,6 +359,9 @@
     document.querySelectorAll(".yn-lang-option").forEach(btn => {
       btn.classList.toggle("attivo", btn.dataset.lang === lang);
     });
+
+    const select = document.querySelector(".yn-lang-select");
+    if (select) select.value = lang;
   }
 
   function createSwitcher() {
@@ -305,13 +372,15 @@
     const wrap = document.createElement("div");
     wrap.className = "yn-lang-switcher";
     wrap.setAttribute("aria-label", "Language selector");
-    wrap.innerHTML = LANGS.map(lang => `<button class="yn-lang-option" type="button" data-lang="${lang}">${lang}</button>`).join("");
+    wrap.innerHTML = `
+      <select class="yn-lang-select" aria-label="Language">
+        ${LANGS.map(lang => `<option value="${lang}">${lang}</option>`).join("")}
+      </select>
+    `;
     nav.appendChild(wrap);
 
-    wrap.addEventListener("click", event => {
-      const btn = event.target.closest(".yn-lang-option");
-      if (!btn) return;
-      localStorage.setItem(STORAGE_KEY, btn.dataset.lang);
+    wrap.querySelector(".yn-lang-select").addEventListener("change", event => {
+      localStorage.setItem(STORAGE_KEY, event.target.value);
       applyTranslations();
     });
   }
