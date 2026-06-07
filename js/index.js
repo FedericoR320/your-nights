@@ -2,7 +2,7 @@ const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
 let eventi = [];
-let cittaCorrente = getCittaIniziale();
+let cittaCorrente = "Torino";
 let filtroTipoCorrente = "tutti";
 let filtroPeriodoCorrente = "singolo";
 let filtroGratisCorrente = false;
@@ -90,6 +90,8 @@ const SEARCH_PLACEHOLDERS = [
   "Cerca DJ set...",
   "Cerca live music..."
 ];
+
+cittaCorrente = getCittaIniziale();
 
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();
