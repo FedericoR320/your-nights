@@ -259,6 +259,7 @@ function mostraLocali(messaggioErrore = "") {
   const categoriaLabel = categoriaCorrente === "tutti" ? "tutte le categorie" : labelCategoria(categoriaCorrente);
   setStatus(`${cittaCorrente} - ${categoriaLabel}`);
   container.innerHTML = localiDaMostrare.map(creaCardLocale).join("");
+  setupCardLocaliCliccabili();
   aggiornaMarker(localiDaMostrare);
   lucide.createIcons();
 }
@@ -274,13 +275,13 @@ function creaCardLocale(locale) {
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${locale.nome} ${locale.indirizzo || cittaCorrente}`)}`;
 
   return `
-    <article class="locale-card" data-locale-id="${escapeHtml(locale.id || locale.osm_id || "")}">
+    <article class="locale-card" data-locale-id="${escapeHtml(locale.id || locale.osm_id || "")}" data-href="${detailUrl}" tabindex="0" role="link" aria-label="Apri ${escapeHtml(locale.nome)}">
       <div class="locale-img" style="background-image:url('${escapeHtml(img)}')">
         <span class="locale-badge">${escapeHtml(labelCategoria(categoria))}</span>
       </div>
 
       <div class="locale-body">
-        <h3><a class="locale-title-link" href="${detailUrl}">${escapeHtml(locale.nome)}</a></h3>
+        <h3>${escapeHtml(locale.nome)}</h3>
 
         <div class="locale-meta">
           <p class="locale-meta-row">
@@ -301,10 +302,6 @@ function creaCardLocale(locale) {
         </p>
 
         <div class="locale-actions">
-          <a href="${detailUrl}">
-            <i data-lucide="arrow-right"></i>
-            Dettagli
-          </a>
           <a href="${mapsUrl}" target="_blank" rel="noopener">
             <i data-lucide="navigation"></i>
             Mappa
@@ -331,6 +328,21 @@ function creaCardLocale(locale) {
       </div>
     </article>
   `;
+}
+
+function setupCardLocaliCliccabili() {
+  document.querySelectorAll(".locale-card[data-href]").forEach(card => {
+    card.addEventListener("click", event => {
+      if (event.target.closest("a, button")) return;
+      window.location.href = card.dataset.href;
+    });
+
+    card.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      window.location.href = card.dataset.href;
+    });
+  });
 }
 
 function descrizioneFallback(categoria) {

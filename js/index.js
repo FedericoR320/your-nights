@@ -91,10 +91,10 @@ function impostaCittaCorrente(citta, aggiornaUrl = true) {
   localStorage.setItem("yn_citta", cittaCorrente);
 
   const inputCitta = document.getElementById("input-citta");
-  if (inputCitta) inputCitta.value = cittaCorrente;
+  if (inputCitta && normalizzaCitta(inputCitta.value) === cittaCorrente) inputCitta.value = "";
 
   const inputCittaModal = document.getElementById("input-citta-modal");
-  if (inputCittaModal) inputCittaModal.value = cittaCorrente;
+  if (inputCittaModal && document.activeElement !== inputCittaModal) inputCittaModal.value = "";
 
   aggiornaHeroCitta();
 
@@ -134,7 +134,8 @@ function apriCityModal() {
 
   modal.style.display = "flex";
   if (input) {
-    input.value = cittaCorrente;
+    input.value = "";
+    input.placeholder = "Cerca citta";
     setTimeout(() => input.focus(), 50);
   }
   aggiornaHeroCitta();
@@ -491,8 +492,7 @@ async function aggiornaCittaDaCoordinate(lat, lng) {
 
 function avviaPlaceholderDinamico() {
   const inputs = [
-    document.getElementById("input-citta"),
-    document.getElementById("input-citta-modal")
+    document.getElementById("input-citta")
   ].filter(Boolean);
 
   if (inputs.length === 0) return;
@@ -574,6 +574,16 @@ function getRisultatiRicerca(query) {
   return [...risultatiCitta, ...risultatiEventi, ...risultatiLocali].slice(0, 8);
 }
 
+function getRisultatiCitta(query) {
+  const q = query.trim().toLowerCase();
+  if (q.length < 1) return [];
+
+  return CITTA_RICERCA
+    .filter(citta => citta.toLowerCase().includes(q))
+    .slice(0, 8)
+    .map(citta => ({ tipo: "citta", titolo: citta, meta: "Cambia citta", valore: citta, icona: "map-pin" }));
+}
+
 function renderRisultatiRicerca(input, container) {
   if (!input || !container) return;
 
@@ -592,6 +602,39 @@ function renderRisultatiRicerca(input, container) {
         <span class="search-result-meta">${risultato.meta}</span>
       </span>
       <span class="search-result-kind">${risultato.tipo}</span>
+    </button>
+  `).join("");
+
+  container.classList.add("aperto");
+
+  container.querySelectorAll(".search-result-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const risultato = risultati[Number(btn.dataset.searchIndex)];
+      applicaRisultatoRicerca(risultato, input, container);
+    });
+  });
+
+  lucide.createIcons();
+}
+
+function renderRisultatiCitta(input, container) {
+  if (!input || !container) return;
+
+  const risultati = getRisultatiCitta(input.value);
+  if (risultati.length === 0) {
+    container.classList.remove("aperto");
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = risultati.map((risultato, index) => `
+    <button class="search-result-btn" type="button" data-search-index="${index}">
+      <span class="search-result-icon"><i data-lucide="${risultato.icona}"></i></span>
+      <span>
+        <span class="search-result-title">${risultato.titolo}</span>
+        <span class="search-result-meta">${risultato.meta}</span>
+      </span>
+      <span class="search-result-kind">citta</span>
     </button>
   `).join("");
 
@@ -675,6 +718,34 @@ function setupRicercaGlobale(inputId, containerId, buttonId = null) {
     button.addEventListener("click", () => eseguiRicercaGlobale(input, container));
   }
 }
+
+function setupRicercaCitta(inputId, containerId, buttonId = null) {
+  const input = document.getElementById(inputId);
+  const container = document.getElementById(containerId);
+  const button = buttonId ? document.getElementById(buttonId) : null;
+
+  if (!input || !container) return;
+
+  input.addEventListener("input", () => renderRisultatiCitta(input, container));
+  input.addEventListener("focus", () => renderRisultatiCitta(input, container));
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const query = input.value.trim();
+      if (query) cambiaCitta(query);
+    }
+    if (e.key === "Escape") {
+      container.classList.remove("aperto");
+    }
+  });
+
+  if (button) {
+    button.addEventListener("click", () => {
+      const query = input.value.trim();
+      if (query) cambiaCitta(query);
+    });
+  }
+}
 // CERCA CITTA
 setupRicercaGlobale("input-citta", "risultati-ricerca", "btn-citta");
 
@@ -693,7 +764,7 @@ const inputCittaModal = document.getElementById("input-citta-modal");
 if (btnCambiaCitta) btnCambiaCitta.addEventListener("click", apriCityModal);
 if (btnChiudiCityModal) btnChiudiCityModal.addEventListener("click", chiudiCityModal);
 if (cityModalOverlay) cityModalOverlay.addEventListener("click", chiudiCityModal);
-setupRicercaGlobale("input-citta-modal", "risultati-ricerca-modal", "btn-citta-modal");
+setupRicercaCitta("input-citta-modal", "risultati-ricerca-modal", "btn-citta-modal");
 
 document.querySelectorAll(".city-suggestion").forEach(btn => {
   btn.addEventListener("click", () => cambiaCitta(btn.dataset.citta));

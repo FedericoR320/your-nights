@@ -175,10 +175,6 @@ function renderLocale(locale) {
     <section class="locale-hero" style="background-image:url('${escapeHtml(img)}')">
       <div class="locale-hero-overlay"></div>
       <div class="locale-hero-content">
-        <a class="locale-back" href="locali.html?citta=${encodeURIComponent(locale.citta || cittaCorrente)}">
-          <i data-lucide="arrow-left"></i>
-          Torna ai locali
-        </a>
         <div class="locale-badges">
           <span>${escapeHtml(labelCategoria(categoria))}</span>
           <span>${escapeHtml(locale.citta || cittaCorrente)}</span>

@@ -88,6 +88,7 @@
   line-height: 0.98;
   letter-spacing: 0;
   margin-bottom: 14px;
+  overflow-wrap: anywhere;
 }
 
 .evento-hero p {
@@ -113,6 +114,7 @@
   padding: 9px 13px;
   backdrop-filter: blur(5px);
   font-size: 0.9rem;
+  max-width: 100%;
 }
 
 .evento-hero-facts i {
@@ -179,6 +181,7 @@
 .evento-place-card span {
   color: #888;
   font-size: 0.9rem;
+  overflow-wrap: anywhere;
 }
 
 .evento-place-card a {
@@ -250,20 +253,63 @@
 
 @media (max-width: 860px) {
   .evento-hero {
-    min-height: 380px;
+    min-height: 360px;
   }
 
   .evento-hero-content {
-    padding: 32px 20px 34px;
+    padding: 30px 18px 32px;
   }
 
   .evento-layout {
     grid-template-columns: 1fr;
-    padding: 24px 20px 42px;
+    padding: 22px 16px 40px;
+    gap: 16px;
   }
 
   .evento-place-card {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .evento-section,
+  .evento-info-card,
+  .evento-actions {
+    border-radius: 14px;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .evento-hero {
+    min-height: 330px;
+  }
+
+  .evento-back {
+    margin-bottom: 20px;
+  }
+
+  .evento-hero h1 {
+    font-size: 2.15rem;
+    line-height: 1.04;
+  }
+
+  .evento-hero p {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .evento-hero-facts {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .evento-hero-facts div {
+    border-radius: 12px;
+  }
+
+  .evento-place-card a,
+  .evento-action-primary,
+  .evento-action-secondary {
+    width: 100%;
   }
 }

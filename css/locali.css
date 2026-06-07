@@ -28,6 +28,7 @@
   font-size: clamp(2.25rem, 5vw, 4.6rem);
   line-height: 0.98;
   margin-bottom: 14px;
+  overflow-wrap: anywhere;
 }
 
 .locali-hero p {
@@ -167,6 +168,7 @@
   border: 1px solid #2b2b2b;
   border-radius: 12px;
   overflow: hidden;
+  cursor: pointer;
   transition: transform 0.2s, border-color 0.2s, background 0.2s;
 }
 
@@ -174,6 +176,11 @@
   transform: translateY(-3px);
   border-color: rgba(230, 57, 70, 0.75);
   background: #1b1b1b;
+}
+
+.locale-card:focus-visible {
+  outline: 2px solid #e63946;
+  outline-offset: 3px;
 }
 
 .locale-img {
@@ -216,15 +223,7 @@
   font-size: 1.08rem;
   line-height: 1.25;
   margin-bottom: 10px;
-}
-
-.locale-title-link {
-  color: inherit;
-  text-decoration: none;
-}
-
-.locale-title-link:hover {
-  color: #ff5a66;
+  overflow-wrap: anywhere;
 }
 
 .locale-meta {
@@ -240,6 +239,8 @@
   color: #a9a9a9;
   font-size: 0.84rem;
   line-height: 1.35;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .locale-meta-row i {
@@ -389,37 +390,90 @@
 
   #mappa-locali {
     height: 360px;
+    min-height: 320px;
   }
 }
 
 @media (max-width: 680px) {
-  header {
-    align-items: stretch;
-    flex-wrap: wrap;
-    gap: 14px;
-    padding: 14px 18px;
+  .locali-page {
+    padding: 24px 14px 40px;
   }
 
-  .cerca-citta {
-    order: 3;
-    flex-basis: 100%;
-    margin: 0;
-  }
-
-  nav {
-    margin-left: auto;
-  }
-
-  nav a,
-  .nav-link {
-    margin-left: 12px;
+  .locali-hero {
+    gap: 18px;
+    margin-bottom: 18px;
   }
 
   .locali-hero h1 {
-    font-size: 2.35rem;
+    font-size: 2.15rem;
+    line-height: 1.02;
+  }
+
+  .locali-hero p {
+    font-size: 0.92rem;
+  }
+
+  .locali-hero-actions {
+    gap: 10px;
+  }
+
+  .locali-search {
+    min-height: 44px;
+    border-radius: 14px;
+  }
+
+  .locali-map-link {
+    min-height: 44px;
+  }
+
+  .locali-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    margin: 0 -14px 18px;
+    padding: 0 14px 2px;
+    scrollbar-width: none;
+  }
+
+  .locali-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .locale-filtro {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 0 14px;
+  }
+
+  .locali-map-panel {
+    border-radius: 14px;
+  }
+
+  #mappa-locali {
+    height: min(360px, 48vh);
+    min-height: 300px;
+  }
+
+  .locali-section-head {
+    margin-bottom: 12px;
   }
 
   #locali-container {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .locale-card:hover {
+    transform: none;
+  }
+
+  .locale-img {
+    height: 145px;
+  }
+
+  .locale-actions a,
+  .locale-actions button {
+    flex: 1 1 auto;
+    min-width: 96px;
   }
 }

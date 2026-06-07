@@ -44,30 +44,6 @@
   padding: 44px 32px 48px;
 }
 
-.locale-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #ddd;
-  text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(0,0,0,0.35);
-  border-radius: 999px;
-  padding: 8px 12px;
-  margin-bottom: 28px;
-  backdrop-filter: blur(5px);
-}
-
-.locale-back:hover {
-  color: #fff;
-  border-color: #e63946;
-}
-
-.locale-back i {
-  width: 16px;
-  height: 16px;
-}
-
 .locale-badges {
   display: flex;
   gap: 8px;
@@ -91,6 +67,7 @@
   font-size: clamp(2.5rem, 6vw, 5.8rem);
   line-height: 0.98;
   margin-bottom: 14px;
+  overflow-wrap: anywhere;
 }
 
 .locale-hero p {
@@ -116,6 +93,7 @@
   padding: 9px 13px;
   backdrop-filter: blur(5px);
   font-size: 0.9rem;
+  max-width: 100%;
 }
 
 .locale-hero-facts i {
@@ -185,6 +163,8 @@
   padding: 12px 0;
   border-bottom: 1px solid #262626;
   line-height: 1.35;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .locale-info-row:last-child {
@@ -282,6 +262,7 @@
   color: #fff;
   font-size: 1rem;
   margin-bottom: 5px;
+  overflow-wrap: anywhere;
 }
 
 .locale-event-card p {
@@ -306,32 +287,53 @@
 
 @media (max-width: 900px) {
   .locale-hero {
-    min-height: 380px;
+    min-height: 360px;
   }
 
   .locale-hero-content {
-    padding: 32px 20px 34px;
+    padding: 30px 18px 32px;
   }
 
   .locale-layout {
     grid-template-columns: 1fr;
-    padding: 28px 20px 44px;
+    padding: 22px 16px 40px;
+    gap: 16px;
+  }
+
+  .locale-section,
+  .locale-info-card,
+  .locale-actions {
+    border-radius: 14px;
+    padding: 18px;
+  }
+
+  .locale-map {
+    padding: 0;
+  }
+
+  #locale-map {
+    height: 300px;
   }
 }
 
 @media (max-width: 620px) {
-  header {
-    align-items: center;
-    padding: 14px 18px;
-  }
-
-  nav a,
-  .nav-link {
-    margin-left: 8px;
-  }
-
   .locale-hero h1 {
-    font-size: 2.4rem;
+    font-size: 2.15rem;
+    line-height: 1.04;
+  }
+
+  .locale-hero p {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .locale-hero-facts {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .locale-hero-facts div {
+    border-radius: 12px;
   }
 
   .locale-event-card {
@@ -340,5 +342,10 @@
 
   .locale-event-date {
     width: 72px;
+  }
+
+  .locale-action-primary,
+  .locale-action-secondary {
+    width: 100%;
   }
 }
