@@ -5,7 +5,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let utenteCorrente = null;
 let eventiSalvatiCache = [];
-let cittaCorrente = getCittaIniziale();
+let cittaCorrente = "Torino";
 
 let meseAcc = new Date().getMonth();
 let annoAcc = new Date().getFullYear();
@@ -41,6 +41,8 @@ const mesiNomiAcc = [
 ];
 
 const giorniNomiAcc = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+
+cittaCorrente = getCittaIniziale();
 
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();

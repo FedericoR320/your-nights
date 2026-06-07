@@ -55,9 +55,11 @@ const CATEGORY_IMAGES = {
 let locali = [];
 let markers = [];
 let mappaLocali = null;
-let cittaCorrente = getCittaIniziale();
+let cittaCorrente = "Torino";
 let categoriaCorrente = "tutti";
 let ricercaCorrente = "";
+
+cittaCorrente = getCittaIniziale();
 
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();
