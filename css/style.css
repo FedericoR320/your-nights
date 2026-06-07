@@ -352,6 +352,39 @@ nav a:hover {
   white-space: nowrap;
 }
 
+.yn-lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 12px;
+  padding: 3px;
+  background: #1b1b1b;
+  border: 1px solid #303030;
+  border-radius: 999px;
+}
+
+.yn-lang-option {
+  min-width: 30px;
+  height: 28px;
+  padding: 0 7px;
+  color: #aaa;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.yn-lang-option:hover {
+  color: #fff;
+}
+
+.yn-lang-option.attivo {
+  color: #fff;
+  background: #e63946;
+}
+
 /* EVENT CARD DECISIONALE */
 .event-card {
   border-radius: 14px;
@@ -570,6 +603,17 @@ nav a:hover {
 
   .btn-salva:hover {
     transform: none;
+  }
+
+  .yn-lang-switcher {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .yn-lang-option {
+    flex: 1;
   }
 }
 

@@ -10,6 +10,28 @@ let cittaCorrente = getCittaIniziale();
 let meseAcc = new Date().getMonth();
 let annoAcc = new Date().getFullYear();
 
+const CITY_ALIASES = {
+  turin: "Torino",
+  torino: "Torino",
+  rome: "Roma",
+  roma: "Roma",
+  milan: "Milano",
+  milano: "Milano",
+  florence: "Firenze",
+  firenze: "Firenze",
+  venice: "Venezia",
+  venezia: "Venezia",
+  naples: "Napoli",
+  napoli: "Napoli",
+  aosta: "Aosta",
+  rimini: "Rimini",
+  riccione: "Riccione",
+  jesolo: "Jesolo",
+  genoa: "Genova",
+  genua: "Genova",
+  genova: "Genova"
+};
+
 let mappaAccount = null;
 let markerAccount = [];
 
@@ -23,6 +45,8 @@ const giorniNomiAcc = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();
   if (!valore) return "Torino";
+  const alias = CITY_ALIASES[valore.toLowerCase()];
+  if (alias) return alias;
   return valore.charAt(0).toUpperCase() + valore.slice(1).toLowerCase();
 }
 

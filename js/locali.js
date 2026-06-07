@@ -21,6 +21,28 @@ const CITY_COORDS = {
   Napoli: [40.8518, 14.2681],
 };
 
+const CITY_ALIASES = {
+  turin: "Torino",
+  torino: "Torino",
+  rome: "Roma",
+  roma: "Roma",
+  milan: "Milano",
+  milano: "Milano",
+  florence: "Firenze",
+  firenze: "Firenze",
+  venice: "Venezia",
+  venezia: "Venezia",
+  naples: "Napoli",
+  napoli: "Napoli",
+  aosta: "Aosta",
+  rimini: "Rimini",
+  riccione: "Riccione",
+  jesolo: "Jesolo",
+  genoa: "Genova",
+  genua: "Genova",
+  genova: "Genova"
+};
+
 const CATEGORY_IMAGES = {
   club: "https://images.unsplash.com/photo-1571266028243-d220c6a7edbf?auto=format&fit=crop&w=900&q=80",
   pub: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=900&q=80",
@@ -40,6 +62,8 @@ let ricercaCorrente = "";
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();
   if (!valore) return "Torino";
+  const alias = CITY_ALIASES[valore.toLowerCase()];
+  if (alias) return alias;
   return valore.charAt(0).toUpperCase() + valore.slice(1).toLowerCase();
 }
 

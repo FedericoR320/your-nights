@@ -4,7 +4,37 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
-const cittaCorrente = params.get("citta") || localStorage.getItem("yn_citta") || "Torino";
+const CITY_ALIASES = {
+  turin: "Torino",
+  torino: "Torino",
+  rome: "Roma",
+  roma: "Roma",
+  milan: "Milano",
+  milano: "Milano",
+  florence: "Firenze",
+  firenze: "Firenze",
+  venice: "Venezia",
+  venezia: "Venezia",
+  naples: "Napoli",
+  napoli: "Napoli",
+  aosta: "Aosta",
+  rimini: "Rimini",
+  riccione: "Riccione",
+  jesolo: "Jesolo",
+  genoa: "Genova",
+  genua: "Genova",
+  genova: "Genova"
+};
+
+function normalizzaCitta(citta) {
+  const valore = (citta || "").trim();
+  if (!valore) return "Torino";
+  const alias = CITY_ALIASES[valore.toLowerCase()];
+  if (alias) return alias;
+  return valore.charAt(0).toUpperCase() + valore.slice(1).toLowerCase();
+}
+
+const cittaCorrente = normalizzaCitta(params.get("citta") || localStorage.getItem("yn_citta") || "Torino");
 localStorage.setItem("yn_citta", cittaCorrente);
 
 const linkMappa = document.querySelector("header nav a");

@@ -46,6 +46,43 @@ const CITY_HERO_DEFAULT = "https://images.unsplash.com/photo-1514525253161-7a46d
 
 const CITTA_RICERCA = Object.keys(CITY_HERO_IMAGES);
 
+const CITY_ALIASES = {
+  turin: "Torino",
+  torino: "Torino",
+  rome: "Roma",
+  roma: "Roma",
+  milan: "Milano",
+  milano: "Milano",
+  florence: "Firenze",
+  firenze: "Firenze",
+  venice: "Venezia",
+  venezia: "Venezia",
+  naples: "Napoli",
+  napoli: "Napoli",
+  bologna: "Bologna",
+  aosta: "Aosta",
+  rimini: "Rimini",
+  riccione: "Riccione",
+  jesolo: "Jesolo",
+  genua: "Genova",
+  genoa: "Genova",
+  genova: "Genova",
+  bari: "Bari",
+  palermo: "Palermo",
+  cagliari: "Cagliari",
+  olbia: "Olbia",
+  trieste: "Trieste",
+  sanremo: "Sanremo",
+  "san remo": "Sanremo",
+  alassio: "Alassio",
+  agrigento: "Agrigento",
+  trapani: "Trapani",
+  verona: "Verona",
+  pisa: "Pisa",
+  lecce: "Lecce",
+  taormina: "Taormina"
+};
+
 const SEARCH_PLACEHOLDERS = [
   "Cerca citta...",
   "Cerca eventi...",
@@ -57,6 +94,8 @@ const SEARCH_PLACEHOLDERS = [
 function normalizzaCitta(citta) {
   const valore = (citta || "").trim();
   if (!valore) return "Torino";
+  const alias = CITY_ALIASES[valore.toLowerCase()];
+  if (alias) return alias;
   return valore.charAt(0).toUpperCase() + valore.slice(1).toLowerCase();
 }
 
@@ -539,7 +578,7 @@ function getRisultatiRicerca(query) {
   if (q.length < 2) return [];
 
   const risultatiCitta = CITTA_RICERCA
-    .filter(citta => citta.toLowerCase().includes(q))
+    .filter(citta => citta.toLowerCase().includes(q) || Object.entries(CITY_ALIASES).some(([alias, canonical]) => canonical === citta && alias.includes(q)))
     .slice(0, 4)
     .map(citta => ({ tipo: "citta", titolo: citta, meta: "Cambia citta", valore: citta, icona: "map-pin" }));
 
@@ -579,7 +618,7 @@ function getRisultatiCitta(query) {
   if (q.length < 1) return [];
 
   return CITTA_RICERCA
-    .filter(citta => citta.toLowerCase().includes(q))
+    .filter(citta => citta.toLowerCase().includes(q) || Object.entries(CITY_ALIASES).some(([alias, canonical]) => canonical === citta && alias.includes(q)))
     .slice(0, 8)
     .map(citta => ({ tipo: "citta", titolo: citta, meta: "Cambia citta", valore: citta, icona: "map-pin" }));
 }
