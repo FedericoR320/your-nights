@@ -73,6 +73,12 @@ function aggiornaLinkCitta() {
   const linkMappa = el("nav-mappa-account");
   if (linkMappa) linkMappa.href = urlConCitta("index.html");
 
+  document.querySelectorAll('a[href^="index.html"]').forEach(link => {
+    const href = link.getAttribute("href") || "";
+    const vista = href.includes("vista=calendario") ? { vista: "calendario" } : {};
+    link.href = urlConCitta("index.html", vista);
+  });
+
   document.querySelectorAll('a[href^="account.html"]').forEach(link => {
     link.href = urlConCitta("account.html");
   });
@@ -256,6 +262,8 @@ async function mostraProfilo(user) {
 
   el("btn-notifiche").style.display = "inline-flex";
   el("avatar-link").style.display = "inline-flex";
+  el("nav-accedi").style.display = "none";
+  document.querySelector(".nav-calendario").style.display = "inline-flex";
 
   const linkAdmin = el("link-admin-panel");
   const userEmail = String(user.email || "").trim().toLowerCase();
@@ -561,6 +569,8 @@ async function logout() {
 
   el("btn-notifiche").style.display = "none";
   el("avatar-link").style.display = "none";
+  el("nav-accedi").style.display = "inline-flex";
+  document.querySelector(".nav-calendario").style.display = "none";
   if (el("link-admin-panel")) el("link-admin-panel").style.display = "none";
 
   el("sezione-profilo").style.display = "none";
@@ -642,6 +652,8 @@ async function controllaSessione() {
     el("sezione-profilo").style.display = "none";
     el("btn-notifiche").style.display = "none";
     el("avatar-link").style.display = "none";
+    el("nav-accedi").style.display = "inline-flex";
+    document.querySelector(".nav-calendario").style.display = "none";
     if (el("link-admin-panel")) el("link-admin-panel").style.display = "none";
     mostraBox("login");
   }

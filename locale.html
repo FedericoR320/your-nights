@@ -18,8 +18,13 @@
     <nav>
       <a href="index.html" class="nav-link">Eventi</a>
       <a href="locali.html" id="link-torna-locali" class="nav-link attiva">Locali</a>
-      <a href="account.html" class="nav-link">Account</a>
-    </nav> 
+      <a href="index.html?vista=calendario" class="nav-link nav-calendario" style="display:none">Calendario</a>
+      <button class="nav-link" id="btn-notifiche" style="display:none"><i data-lucide="bell"></i></button>
+      <a href="account.html" id="avatar-link" style="display:none">
+        <div id="avatar"><i data-lucide="user"></i></div>
+      </a>
+      <a href="account.html" id="nav-accedi" class="nav-link">Accedi</a>
+    </nav>
   </header>
 
   <div id="locale-container">
@@ -30,6 +35,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/locale.js"></script>
+  <script src="js/nav.js"></script>
   <script src="js/i18n.js"></script>
   <script>lucide.createIcons();</script>
 </body>

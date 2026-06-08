@@ -97,7 +97,9 @@ function normalizeUrl(url) {
 
 function aggiornaLinkCitta() {
   document.querySelectorAll('a[href^="index.html"]').forEach(link => {
-    link.href = urlConCitta("index.html");
+    const href = link.getAttribute("href") || "";
+    const vista = href.includes("vista=calendario") ? { vista: "calendario" } : {};
+    link.href = urlConCitta("index.html", vista);
   });
 
   document.querySelectorAll('a[href^="account.html"]').forEach(link => {
@@ -106,6 +108,35 @@ function aggiornaLinkCitta() {
 
   const linkEventi = document.getElementById("link-eventi-citta");
   if (linkEventi) linkEventi.href = urlConCitta("index.html");
+}
+
+async function aggiornaHeaderLocali() {
+  const { data } = await supabaseClient.auth.getSession();
+  const logged = !!data.session;
+  const navAccedi = document.getElementById("nav-accedi");
+  const btnNotifiche = document.getElementById("btn-notifiche");
+  const avatarLink = document.getElementById("avatar-link");
+  const navCalendario = document.querySelector(".nav-calendario");
+
+  if (navAccedi) navAccedi.style.display = logged ? "none" : "inline-flex";
+  if (btnNotifiche) btnNotifiche.style.display = logged ? "inline-flex" : "none";
+  if (avatarLink) avatarLink.style.display = logged ? "inline-flex" : "none";
+  if (navCalendario) navCalendario.style.display = logged ? "inline-flex" : "none";
+
+  if (logged) {
+    const user = data.session.user;
+    const { data: profilo } = await supabaseClient
+      .from("profili")
+      .select("avatar_url")
+      .eq("id", user.id)
+      .single();
+
+    if (profilo?.avatar_url) {
+      document.getElementById("avatar").innerHTML = `<img src="${profilo.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+    }
+  }
+
+  lucide.createIcons();
 }
 
 function impostaCittaCorrente(citta, aggiornaUrl = true) {
@@ -419,3 +450,4 @@ function cercaCittaLocali() {
 
 impostaCittaCorrente(cittaCorrente, false);
 caricaLocali(cittaCorrente);
+aggiornaHeaderLocali();
