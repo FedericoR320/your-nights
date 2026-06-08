@@ -2,6 +2,9 @@ const SUPABASE_URL = "https://bwwvmfrwrbaklhhrfpca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3ZtZnJ3cmJha2xoaHJmcGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NTcsImV4cCI6MjA5NTY1MzY1N30.7FQtKrxYBfZw8gnTFbPOGRdb73OlSxxH6cA-ED85uP0";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const ADMIN_EMAILS = [
+  "federicoricci25@gmail.com"
+];
 
 let utenteCorrente = null;
 let eventiSalvatiCache = [];
@@ -73,6 +76,13 @@ function aggiornaLinkCitta() {
   document.querySelectorAll('a[href^="account.html"]').forEach(link => {
     link.href = urlConCitta("account.html");
   });
+
+  document.querySelectorAll('a[href^="locali.html"]').forEach(link => {
+    link.href = urlConCitta("locali.html");
+  });
+
+  const linkAdmin = el("link-admin-panel");
+  if (linkAdmin) linkAdmin.href = urlConCitta("admin.html");
 }
 
 function impostaCittaCorrente(citta, aggiornaUrl = true) {
@@ -246,6 +256,14 @@ async function mostraProfilo(user) {
 
   el("btn-notifiche").style.display = "inline-flex";
   el("avatar-link").style.display = "inline-flex";
+
+  const linkAdmin = el("link-admin-panel");
+  const userEmail = String(user.email || "").trim().toLowerCase();
+  const isAdmin = ADMIN_EMAILS.some(email => String(email).trim().toLowerCase() === userEmail);
+  if (linkAdmin) {
+    linkAdmin.style.display = isAdmin ? "flex" : "none";
+    linkAdmin.href = urlConCitta("admin.html");
+  }
 
   if (profilo?.avatar_url) {
     mostraAvatar(profilo.avatar_url);
@@ -543,6 +561,7 @@ async function logout() {
 
   el("btn-notifiche").style.display = "none";
   el("avatar-link").style.display = "none";
+  if (el("link-admin-panel")) el("link-admin-panel").style.display = "none";
 
   el("sezione-profilo").style.display = "none";
   el("sezione-auth").style.display = "block";
@@ -623,6 +642,7 @@ async function controllaSessione() {
     el("sezione-profilo").style.display = "none";
     el("btn-notifiche").style.display = "none";
     el("avatar-link").style.display = "none";
+    if (el("link-admin-panel")) el("link-admin-panel").style.display = "none";
     mostraBox("login");
   }
 }
