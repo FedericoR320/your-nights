@@ -76,6 +76,8 @@ let activeTab = "eventi";
 let currentRecords = [];
 let editingId = null;
 let cittaCorrente = getCittaIniziale();
+let localeSuggestions = [];
+let localeSearchTimer = null;
 
 function el(id) {
   return document.getElementById(id);
@@ -188,7 +190,102 @@ function renderForm(record = {}) {
   `;
 
   el("admin-cancel").addEventListener("click", () => renderForm());
+  setupLocaleAutofill();
   lucide.createIcons();
+}
+
+function setupLocaleAutofill() {
+  if (activeTab !== "eventi") return;
+
+  const localeInput = el("field-locale");
+  if (!localeInput) return;
+
+  localeInput.setAttribute("list", "admin-locali-suggestions");
+
+  let datalist = document.getElementById("admin-locali-suggestions");
+  if (!datalist) {
+    datalist = document.createElement("datalist");
+    datalist.id = "admin-locali-suggestions";
+    el("admin-form").appendChild(datalist);
+  }
+
+  localeInput.addEventListener("input", () => {
+    clearTimeout(localeSearchTimer);
+    localeSearchTimer = setTimeout(() => cercaLocaliPerEvento(localeInput.value), 220);
+  });
+
+  localeInput.addEventListener("change", () => applicaLocaleSuggerito(localeInput.value));
+  localeInput.addEventListener("blur", () => applicaLocaleSuggerito(localeInput.value));
+}
+
+async function cercaLocaliPerEvento(query) {
+  const nome = query.trim();
+  const datalist = document.getElementById("admin-locali-suggestions");
+
+  if (!datalist || nome.length < 2) {
+    localeSuggestions = [];
+    if (datalist) datalist.innerHTML = "";
+    return;
+  }
+
+  const citta = normalizzaCitta(el("field-citta")?.value || el("admin-citta")?.value || cittaCorrente);
+  const { data, error } = await supabaseClient
+    .from("locali")
+    .select("id,nome,citta,indirizzo,lat,lng,immagine")
+    .ilike("citta", citta)
+    .ilike("nome", `%${nome}%`)
+    .order("nome", { ascending: true })
+    .limit(8);
+
+  if (error) {
+    console.warn("Suggerimenti locali non caricati", error);
+    return;
+  }
+
+  localeSuggestions = data || [];
+  datalist.innerHTML = localeSuggestions
+    .map(locale => `<option value="${escapeHtml(locale.nome)}">${escapeHtml(locale.indirizzo || locale.citta || "")}</option>`)
+    .join("");
+}
+
+async function applicaLocaleSuggerito(nomeLocale) {
+  const nome = nomeLocale.trim();
+  if (!nome || activeTab !== "eventi") return;
+
+  let locale = localeSuggestions.find(item => item.nome.toLowerCase() === nome.toLowerCase());
+
+  if (!locale) {
+    const citta = normalizzaCitta(el("field-citta")?.value || el("admin-citta")?.value || cittaCorrente);
+    const { data, error } = await supabaseClient
+      .from("locali")
+      .select("id,nome,citta,indirizzo,lat,lng,immagine")
+      .ilike("citta", citta)
+      .ilike("nome", nome)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.warn("Locale non trovato per autofill", error);
+      return;
+    }
+    locale = data;
+  }
+
+  if (!locale) return;
+
+  riempiCampoEvento("indirizzo", locale.indirizzo, true);
+  riempiCampoEvento("lat", locale.lat, true);
+  riempiCampoEvento("lng", locale.lng, true);
+  riempiCampoEvento("immagine", locale.immagine, false);
+
+  el("admin-form-status").textContent = `Dati locale importati da ${locale.nome}.`;
+}
+
+function riempiCampoEvento(nomeCampo, valore, sovrascrivi = false) {
+  const input = el(`field-${nomeCampo}`);
+  if (!input || valore === null || valore === undefined || valore === "") return;
+  if (!sovrascrivi && input.value.trim()) return;
+  input.value = valore;
 }
 
 function formPayload() {
